@@ -15,13 +15,13 @@ extern void ui_Novo_Registro_screen_init(void);
 extern void ui_Novo_Registro_screen_destroy(void);
 extern void ui_event_Novo_Registro(lv_event_t * e);
 extern lv_obj_t * ui_Novo_Registro;
+extern void ui_event_Button5(lv_event_t * e);
+extern lv_obj_t * ui_Button5;
+extern lv_obj_t * ui_Label14;
 extern lv_obj_t * ui_Keyboard4;
 extern void ui_event_TextArea2(lv_event_t * e);
 extern lv_obj_t * ui_TextArea2;
 extern lv_obj_t * ui_Label10;
-extern void ui_event_Button5(lv_event_t * e);
-extern lv_obj_t * ui_Button5;
-extern lv_obj_t * ui_Label14;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

@@ -49,7 +49,7 @@ void ui_Tela_Inicial_screen_init(void)
     lv_obj_set_x(ui_Label1, 0);
     lv_obj_set_y(ui_Label1, 100);
     lv_obj_set_align(ui_Label1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label1, "CLIQUE PARA INICAR");
+    lv_label_set_text(ui_Label1, "CLIQUE PARA INICIAR");
     lv_obj_set_style_text_font(ui_Label1, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_blend_mode(ui_Label1, LV_BLEND_MODE_NORMAL, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_opa(ui_Label1, 155, LV_PART_MAIN | LV_STATE_DEFAULT);

@@ -1,6 +1,10 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>          
-#include <TFT_Touch.h>         
+#include <TFT_Touch.h> 
+
+#include <Wire.h>
+#include <RTClib.h>
+
 #include "ui.h"              
 
 // --------------------- Configurações do Display ---------------------
@@ -10,7 +14,11 @@ static const uint16_t screenHeight = 240;
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * screenHeight / 4];
 
-TFT_eSPI tft = TFT_eSPI();
+TFT_eSPI tft = TFT_eSPI();  
+RTC_DS3231 rtc;            
+
+unsigned long lastUpdate = 0;
+const unsigned long updateInterval = 1000;  // 1s
 
 // --------------------- Configurações do Touch ---------------------
 #define DOUT 39  /* Data out pin (T_DO)    */
@@ -83,11 +91,37 @@ void setup() {
 
     // Inicializa UI
     ui_init();
+
+    // inicializa RTC 
+    if (!rtc.begin()){
+        Serial.println("Erro: RTC não encontrado!");
+    } else {
+        if (rtc.lostPower()){
+            Serial.println("RTC sem hora. Ajustando hora para compilação.");
+            rtc.adjust(DataTime(F(__DATA__), F(__TIME__)));  // Ajuste inicial
+        }
+    }
 }
 
 // --------------------- Loop ---------------------
 void loop() {
     lv_timer_handler();  // Processa tarefas LVGL
     delay(5);
+
+    // Atualiza a cada 1 s
+    unsigned long nowMs = millis();
+    if (nowMs - lastUpdate >= updateInterval){
+        lastUpdate = nowMs;
+
+        DateTime now = rtc.now();
+        char buffer[32];
+
+        sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d",
+            now.day(), now.month(), now.year(),
+            now.hour(), now.minute(), now.second());
+        
+    // Atualiza label da UI
+    lv_label_set_text(ui_label10, buffer);
+    }
 }
 

@@ -6,11 +6,11 @@
 #include "ui.h"
 
 lv_obj_t * ui_Novo_Registro = NULL;
+lv_obj_t * ui_Button5 = NULL;
+lv_obj_t * ui_Label14 = NULL;
 lv_obj_t * ui_Keyboard4 = NULL;
 lv_obj_t * ui_TextArea2 = NULL;
 lv_obj_t * ui_Label10 = NULL;
-lv_obj_t * ui_Button5 = NULL;
-lv_obj_t * ui_Label14 = NULL;
 // event funtions
 void ui_event_Novo_Registro(lv_event_t * e)
 {
@@ -18,17 +18,6 @@ void ui_event_Novo_Registro(lv_event_t * e)
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_flag_modify(ui_Keyboard4, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-    }
-}
-
-void ui_event_TextArea2(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_flag_modify(ui_Keyboard4, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
-        _ui_keyboard_set_target(ui_Keyboard4,  ui_TextArea2);
-        _ui_flag_modify(ui_Button5, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
     }
 }
 
@@ -41,6 +30,16 @@ void ui_event_Button5(lv_event_t * e)
     }
 }
 
+void ui_event_TextArea2(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_Keyboard4, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
+        _ui_keyboard_set_target(ui_Keyboard4,  ui_TextArea2);
+    }
+}
+
 // build funtions
 
 void ui_Novo_Registro_screen_init(void)
@@ -49,6 +48,23 @@ void ui_Novo_Registro_screen_init(void)
     lv_obj_clear_flag(ui_Novo_Registro, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_grad_color(ui_Novo_Registro, lv_color_hex(0x003F83), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_grad_dir(ui_Novo_Registro, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Button5 = lv_btn_create(ui_Novo_Registro);
+    lv_obj_set_width(ui_Button5, 90);
+    lv_obj_set_height(ui_Button5, 35);
+    lv_obj_set_x(ui_Button5, -110);
+    lv_obj_set_y(ui_Button5, 95);
+    lv_obj_set_align(ui_Button5, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Button5, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_Button5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Button5, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Button5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Label14 = lv_label_create(ui_Button5);
+    lv_obj_set_width(ui_Label14, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label14, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_Label14, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label14, "Voltar");
 
     ui_Keyboard4 = lv_keyboard_create(ui_Novo_Registro);
     lv_obj_set_width(ui_Keyboard4, 320);
@@ -79,25 +95,8 @@ void ui_Novo_Registro_screen_init(void)
     lv_obj_set_align(ui_Label10, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label10, "dd/mm/aa hh::mm::ss");
 
-    ui_Button5 = lv_btn_create(ui_Novo_Registro);
-    lv_obj_set_width(ui_Button5, 90);
-    lv_obj_set_height(ui_Button5, 35);
-    lv_obj_set_x(ui_Button5, -110);
-    lv_obj_set_y(ui_Button5, 95);
-    lv_obj_set_align(ui_Button5, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Button5, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_Button5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Button5, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Button5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_Label14 = lv_label_create(ui_Button5);
-    lv_obj_set_width(ui_Label14, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Label14, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_Label14, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label14, "Voltar");
-
-    lv_obj_add_event_cb(ui_TextArea2, ui_event_TextArea2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button5, ui_event_Button5, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_TextArea2, ui_event_TextArea2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Novo_Registro, ui_event_Novo_Registro, LV_EVENT_ALL, NULL);
 
 }
@@ -108,10 +107,10 @@ void ui_Novo_Registro_screen_destroy(void)
 
     // NULL screen variables
     ui_Novo_Registro = NULL;
+    ui_Button5 = NULL;
+    ui_Label14 = NULL;
     ui_Keyboard4 = NULL;
     ui_TextArea2 = NULL;
     ui_Label10 = NULL;
-    ui_Button5 = NULL;
-    ui_Label14 = NULL;
 
 }
