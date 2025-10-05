@@ -10,13 +10,33 @@ lv_obj_t * ui_BTNovoRegistro = NULL;
 lv_obj_t * ui_Label6 = NULL;
 lv_obj_t * ui_BTCarregarDados = NULL;
 lv_obj_t * ui_Label7 = NULL;
+lv_obj_t * ui_Button3 = NULL;
+lv_obj_t * ui_Label13 = NULL;
 // event funtions
 void ui_event_BTNovoRegistro(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Novo_Usuario, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Novo_Usuario_screen_init);
+        _ui_screen_change(&ui_Novo_Registro, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Novo_Registro_screen_init);
+    }
+}
+
+void ui_event_BTCarregarDados(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Carregar_Dados, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Carregar_Dados_screen_init);
+    }
+}
+
+void ui_event_Button3(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Selecao_de_Modo, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Selecao_de_Modo_screen_init);
     }
 }
 
@@ -26,11 +46,13 @@ void ui_Modo_Registro_screen_init(void)
 {
     ui_Modo_Registro = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Modo_Registro, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_grad_color(ui_Modo_Registro, lv_color_hex(0x003F83), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui_Modo_Registro, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_BTNovoRegistro = lv_btn_create(ui_Modo_Registro);
-    lv_obj_set_width(ui_BTNovoRegistro, 123);
+    lv_obj_set_width(ui_BTNovoRegistro, 125);
     lv_obj_set_height(ui_BTNovoRegistro, 50);
-    lv_obj_set_x(ui_BTNovoRegistro, -7);
+    lv_obj_set_x(ui_BTNovoRegistro, 0);
     lv_obj_set_y(ui_BTNovoRegistro, -45);
     lv_obj_set_align(ui_BTNovoRegistro, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_BTNovoRegistro, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
@@ -47,8 +69,8 @@ void ui_Modo_Registro_screen_init(void)
     ui_BTCarregarDados = lv_btn_create(ui_Modo_Registro);
     lv_obj_set_width(ui_BTCarregarDados, 125);
     lv_obj_set_height(ui_BTCarregarDados, 50);
-    lv_obj_set_x(ui_BTCarregarDados, -9);
-    lv_obj_set_y(ui_BTCarregarDados, 36);
+    lv_obj_set_x(ui_BTCarregarDados, 0);
+    lv_obj_set_y(ui_BTCarregarDados, 45);
     lv_obj_set_align(ui_BTCarregarDados, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_BTCarregarDados, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_BTCarregarDados, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -61,7 +83,26 @@ void ui_Modo_Registro_screen_init(void)
     lv_obj_set_align(ui_Label7, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label7, "Carregar Dados");
 
+    ui_Button3 = lv_btn_create(ui_Modo_Registro);
+    lv_obj_set_width(ui_Button3, 90);
+    lv_obj_set_height(ui_Button3, 35);
+    lv_obj_set_x(ui_Button3, -110);
+    lv_obj_set_y(ui_Button3, 95);
+    lv_obj_set_align(ui_Button3, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Button3, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_Button3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Button3, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Button3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Label13 = lv_label_create(ui_Button3);
+    lv_obj_set_width(ui_Label13, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label13, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_Label13, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label13, "Voltar");
+
     lv_obj_add_event_cb(ui_BTNovoRegistro, ui_event_BTNovoRegistro, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_BTCarregarDados, ui_event_BTCarregarDados, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Button3, ui_event_Button3, LV_EVENT_ALL, NULL);
 
 }
 
@@ -75,5 +116,7 @@ void ui_Modo_Registro_screen_destroy(void)
     ui_Label6 = NULL;
     ui_BTCarregarDados = NULL;
     ui_Label7 = NULL;
+    ui_Button3 = NULL;
+    ui_Label13 = NULL;
 
 }

@@ -15,7 +15,8 @@ extern void ui_Tela_Inicial_screen_init(void);
 extern void ui_Tela_Inicial_screen_destroy(void);
 extern void ui_event_Tela_Inicial(lv_event_t * e);
 extern lv_obj_t * ui_Tela_Inicial;
-extern lv_obj_t * ui_Label9;
+extern void ui_event_Label1(lv_event_t * e);
+extern lv_obj_t * ui_Label1;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

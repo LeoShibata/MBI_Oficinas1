@@ -6,7 +6,7 @@
 #include "ui.h"
 
 lv_obj_t * ui_Tela_Inicial = NULL;
-lv_obj_t * ui_Label9 = NULL;
+lv_obj_t * ui_Label1 = NULL;
 // event funtions
 void ui_event_Tela_Inicial(lv_event_t * e)
 {
@@ -14,6 +14,18 @@ void ui_event_Tela_Inicial(lv_event_t * e)
 
     if(event_code == LV_EVENT_RELEASED) {
         _ui_screen_change(&ui_Selecao_de_Modo, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Selecao_de_Modo_screen_init);
+    }
+    if(event_code == LV_EVENT_SCREEN_LOADED) {
+        Blink_Animation(ui_Label1, 0);
+    }
+}
+
+void ui_event_Label1(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_SCREEN_LOADED) {
+        Blink_Animation(ui_Label1, 0);
     }
 }
 
@@ -25,17 +37,24 @@ void ui_Tela_Inicial_screen_init(void)
     lv_obj_clear_flag(ui_Tela_Inicial, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_Tela_Inicial, lv_color_hex(0x0079FF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Tela_Inicial, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_color(ui_Tela_Inicial, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_dir(ui_Tela_Inicial, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_src(ui_Tela_Inicial, &ui_img_mbi_logo_png, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_opa(ui_Tela_Inicial, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_recolor(ui_Tela_Inicial, lv_color_hex(0xFDFDFD), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_img_recolor_opa(ui_Tela_Inicial, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Tela_Inicial, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Label9 = lv_label_create(ui_Tela_Inicial);
-    lv_obj_set_width(ui_Label9, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Label9, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_Label9, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label9, "MBI\nModulo Biometrico Integrado");
-    lv_obj_set_style_text_align(ui_Label9, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_Label1 = lv_label_create(ui_Tela_Inicial);
+    lv_obj_set_width(ui_Label1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label1, 0);
+    lv_obj_set_y(ui_Label1, 100);
+    lv_obj_set_align(ui_Label1, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label1, "CLIQUE PARA INICAR");
+    lv_obj_set_style_text_font(ui_Label1, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_blend_mode(ui_Label1, LV_BLEND_MODE_NORMAL, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_opa(ui_Label1, 155, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    lv_obj_add_event_cb(ui_Label1, ui_event_Label1, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Tela_Inicial, ui_event_Tela_Inicial, LV_EVENT_ALL, NULL);
 
 }
@@ -46,6 +65,6 @@ void ui_Tela_Inicial_screen_destroy(void)
 
     // NULL screen variables
     ui_Tela_Inicial = NULL;
-    ui_Label9 = NULL;
+    ui_Label1 = NULL;
 
 }

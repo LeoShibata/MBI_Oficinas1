@@ -13,8 +13,8 @@ extern "C" {
 // SCREEN: ui_Selecao_de_Modo
 extern void ui_Selecao_de_Modo_screen_init(void);
 extern void ui_Selecao_de_Modo_screen_destroy(void);
-extern void ui_event_Selecao_de_Modo(lv_event_t * e);
 extern lv_obj_t * ui_Selecao_de_Modo;
+extern void ui_event_BTModoConsulta(lv_event_t * e);
 extern lv_obj_t * ui_BTModoConsulta;
 extern lv_obj_t * ui_Label3;
 extern void ui_event_BTModoRegistro(lv_event_t * e);

@@ -8,7 +8,17 @@
 lv_obj_t * ui_Modo_Consulta = NULL;
 lv_obj_t * ui_Label5 = NULL;
 lv_obj_t * ui_Label8 = NULL;
+lv_obj_t * ui_Button1 = NULL;
+lv_obj_t * ui_Label11 = NULL;
 // event funtions
+void ui_event_Button1(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Selecao_de_Modo, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Selecao_de_Modo_screen_init);
+    }
+}
 
 // build funtions
 
@@ -16,23 +26,42 @@ void ui_Modo_Consulta_screen_init(void)
 {
     ui_Modo_Consulta = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Modo_Consulta, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_grad_color(ui_Modo_Consulta, lv_color_hex(0x003F83), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui_Modo_Consulta, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Label5 = lv_label_create(ui_Modo_Consulta);
     lv_obj_set_width(ui_Label5, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label5, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label5, 7);
-    lv_obj_set_y(ui_Label5, 31);
-    lv_obj_set_align(ui_Label5, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_Label5, "Selecionar Instrumento:");
+    lv_obj_set_x(ui_Label5, 0);
+    lv_obj_set_y(ui_Label5, -70);
+    lv_obj_set_align(ui_Label5, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label5, "SELECIONE INSTRUMENTO:");
     lv_obj_set_style_text_font(ui_Label5, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Label8 = lv_label_create(ui_Modo_Consulta);
     lv_obj_set_width(ui_Label8, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label8, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label8, -9);
-    lv_obj_set_y(ui_Label8, -8);
     lv_obj_set_align(ui_Label8, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label8, "(. . .)");
+
+    ui_Button1 = lv_btn_create(ui_Modo_Consulta);
+    lv_obj_set_width(ui_Button1, 90);
+    lv_obj_set_height(ui_Button1, 35);
+    lv_obj_set_x(ui_Button1, -110);
+    lv_obj_set_y(ui_Button1, 95);
+    lv_obj_set_align(ui_Button1, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Button1, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_Button1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Button1, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Button1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Label11 = lv_label_create(ui_Button1);
+    lv_obj_set_width(ui_Label11, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label11, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_Label11, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label11, "Voltar");
+
+    lv_obj_add_event_cb(ui_Button1, ui_event_Button1, LV_EVENT_ALL, NULL);
 
 }
 
@@ -44,5 +73,7 @@ void ui_Modo_Consulta_screen_destroy(void)
     ui_Modo_Consulta = NULL;
     ui_Label5 = NULL;
     ui_Label8 = NULL;
+    ui_Button1 = NULL;
+    ui_Label11 = NULL;
 
 }

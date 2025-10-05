@@ -16,6 +16,9 @@ extern void ui_Modo_Consulta_screen_destroy(void);
 extern lv_obj_t * ui_Modo_Consulta;
 extern lv_obj_t * ui_Label5;
 extern lv_obj_t * ui_Label8;
+extern void ui_event_Button1(lv_event_t * e);
+extern lv_obj_t * ui_Button1;
+extern lv_obj_t * ui_Label11;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

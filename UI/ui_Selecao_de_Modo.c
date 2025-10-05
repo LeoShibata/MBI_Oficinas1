@@ -12,7 +12,7 @@ lv_obj_t * ui_BTModoRegistro = NULL;
 lv_obj_t * ui_Label4 = NULL;
 lv_obj_t * ui_Label2 = NULL;
 // event funtions
-void ui_event_Selecao_de_Modo(lv_event_t * e)
+void ui_event_BTModoConsulta(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
@@ -36,12 +36,16 @@ void ui_Selecao_de_Modo_screen_init(void)
 {
     ui_Selecao_de_Modo = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Selecao_de_Modo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_grad_color(ui_Selecao_de_Modo, lv_color_hex(0x003F83), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_main_stop(ui_Selecao_de_Modo, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_stop(ui_Selecao_de_Modo, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui_Selecao_de_Modo, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_BTModoConsulta = lv_btn_create(ui_Selecao_de_Modo);
-    lv_obj_set_width(ui_BTModoConsulta, 126);
+    lv_obj_set_width(ui_BTModoConsulta, 130);
     lv_obj_set_height(ui_BTModoConsulta, 50);
-    lv_obj_set_x(ui_BTModoConsulta, -73);
-    lv_obj_set_y(ui_BTModoConsulta, -3);
+    lv_obj_set_x(ui_BTModoConsulta, -70);
+    lv_obj_set_y(ui_BTModoConsulta, 0);
     lv_obj_set_align(ui_BTModoConsulta, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_BTModoConsulta, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_BTModoConsulta, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -55,10 +59,10 @@ void ui_Selecao_de_Modo_screen_init(void)
     lv_label_set_text(ui_Label3, "Modo Consulta");
 
     ui_BTModoRegistro = lv_btn_create(ui_Selecao_de_Modo);
-    lv_obj_set_width(ui_BTModoRegistro, 131);
+    lv_obj_set_width(ui_BTModoRegistro, 130);
     lv_obj_set_height(ui_BTModoRegistro, 50);
-    lv_obj_set_x(ui_BTModoRegistro, 66);
-    lv_obj_set_y(ui_BTModoRegistro, -2);
+    lv_obj_set_x(ui_BTModoRegistro, 70);
+    lv_obj_set_y(ui_BTModoRegistro, 0);
     lv_obj_set_align(ui_BTModoRegistro, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_BTModoRegistro, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_BTModoRegistro, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -74,14 +78,16 @@ void ui_Selecao_de_Modo_screen_init(void)
     ui_Label2 = lv_label_create(ui_Selecao_de_Modo);
     lv_obj_set_width(ui_Label2, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label2, -10);
-    lv_obj_set_y(ui_Label2, -64);
+    lv_obj_set_x(ui_Label2, 0);
+    lv_obj_set_y(ui_Label2, -70);
     lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label2, "Selecionar Modo:");
+    lv_label_set_text(ui_Label2, "SELECIONE MODO:");
+    lv_obj_set_style_text_color(ui_Label2, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_Label2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Label2, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    lv_obj_add_event_cb(ui_BTModoConsulta, ui_event_BTModoConsulta, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_BTModoRegistro, ui_event_BTModoRegistro, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Selecao_de_Modo, ui_event_Selecao_de_Modo, LV_EVENT_ALL, NULL);
 
 }
 

@@ -22,14 +22,19 @@ extern "C" {
 #include "ui_Selecao_de_Modo.h"
 #include "ui_Modo_Consulta.h"
 #include "ui_Modo_Registro.h"
-#include "ui_Novo_Usuario.h"
+#include "ui_Novo_Registro.h"
+#include "ui_Carregar_Dados.h"
 
 ///////////////////// VARIABLES ////////////////////
 
+extern lv_anim_t * Blink_Animation(lv_obj_t * TargetObject, int delay);
 
 // EVENTS
 
 extern lv_obj_t * ui____initial_actions0;
+
+// IMAGES AND IMAGE SETS
+LV_IMG_DECLARE(ui_img_mbi_logo_png);    // assets/MBI_logo.png
 
 // UI INIT
 void ui_init(void);
