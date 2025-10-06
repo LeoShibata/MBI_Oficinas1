@@ -98,7 +98,7 @@ void setup() {
     } else {
         if (rtc.lostPower()){
             Serial.println("RTC sem hora. Ajustando hora para compilação.");
-            rtc.adjust(DataTime(F(__DATA__), F(__TIME__)));  // Ajuste inicial
+            rtc.adjust(DataTime(F(__DATE__), F(__TIME__)));  // Ajuste inicial
         }
     }
 }
