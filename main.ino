@@ -1,11 +1,10 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>          
 #include <TFT_Touch.h> 
-
 #include <Wire.h>
-#include <RTClib.h>
 
 #include "ui.h"              
+#include "RTC.h"
 
 // --------------------- Configurações do Display ---------------------
 static const uint16_t screenWidth = 320;
@@ -14,8 +13,7 @@ static const uint16_t screenHeight = 240;
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * screenHeight / 4];
 
-TFT_eSPI tft = TFT_eSPI();  
-RTC_DS3231 rtc;            
+TFT_eSPI tft = TFT_eSPI();           
 
 unsigned long lastUpdate = 0;
 const unsigned long updateInterval = 1000;  // 1s
@@ -93,15 +91,7 @@ void setup() {
     ui_init();
 
     // inicializa RTC 
-    if (!rtc.begin()){
-        Serial.println("Erro: RTC não encontrado!");
-    } else {
-        if (rtc.lostPower()){
-            Serial.println("RTC sem hora. Ajustando hora para compilação.");
-            rtc.adjust(DataTime(F(__DATE__), F(__TIME__)));  // Ajuste inicial
-        }
-    }
-}
+    rtc_init();
 
 // --------------------- Loop ---------------------
 void loop() {
@@ -113,7 +103,7 @@ void loop() {
     if (nowMs - lastUpdate >= updateInterval){
         lastUpdate = nowMs;
 
-        DateTime now = rtc.now();
+        DateTime now = rtc_getTime();
         char buffer[32];
 
         sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d",
