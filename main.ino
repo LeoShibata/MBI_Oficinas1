@@ -1,12 +1,13 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>          
 #include <TFT_Touch.h> 
+
 #include <Wire.h>
 
 #include "ui.h"              
-#include "RTC.h"
+#include "RTC_Module.h"
 
-// --------------------- Configurações do Display ---------------------
+// -------------- ------- Configurações do Display ---------------------
 static const uint16_t screenWidth = 320;
 static const uint16_t screenHeight = 240;
 
@@ -92,6 +93,7 @@ void setup() {
 
     // inicializa RTC 
     rtc_init();
+}
 
 // --------------------- Loop ---------------------
 void loop() {
@@ -111,7 +113,7 @@ void loop() {
             now.hour(), now.minute(), now.second());
         
     // Atualiza label da UI
-    lv_label_set_text(ui_label10, buffer);
+    lv_label_set_text(ui_Label10, buffer);
     }
 }
 
