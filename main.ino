@@ -121,7 +121,7 @@ void loop() {
             now.hour(), now.minute(), now.second());
         
     // Atualiza label da UI
-    lv_label_set_text(ui_label10, buffer);
+    lv_label_set_text(ui_Label10, buffer);
     }
 }
 
