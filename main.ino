@@ -60,6 +60,8 @@ void my_touchpad_read(lv_indev_drv_t *indev, lv_indev_data_t *data) {
 void setup() {
     Serial.begin(115200);
 
+    Wire.begin(27,22); // integras portas 27 e 22 do esp32
+
     // Inicializa display TFT
     tft.begin();
     tft.setRotation(1);  // 0=portrait, 1=landscape
