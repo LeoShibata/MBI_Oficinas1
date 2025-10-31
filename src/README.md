@@ -1,16 +1,15 @@
 
 # src — Biblioteca do Módulo Biométrico Integrado (MBI)
 
-Este diretório contém **somente** os módulos de firmware e headers destinados à placa **ESP32-2432S028R** (ESP32 + ILI9341 320×240 + touch XPT2046 + microSD).  
-Abrange: **LVGL** (display/touch), **RTC (DS3231)** e **CSV em microSD**.  
-Não contém nem documenta arquivos de aplicação fora de `src/`.
+Este diretório contém **somente** os módulos e headers de firmware para a **ESP32-2432S028R** (ESP32 + ILI9341 320×240 + touch XPT2046 + microSD).  
+Inclui: **LVGL** (display/touch), **RTC (DS3231)** e **CSV em microSD**.  
+**Não** documenta a aplicação de alto nível; apenas a API e o comportamento dos módulos dentro de `src/`.
 
 ---
 
 ## Estrutura de diretórios
 
 ```
-
 src/
 ├─ LVGL_Display.h
 ├─ LVGL_Display.cpp
@@ -23,66 +22,74 @@ src/
 ├─ ui_helpers.h
 └─ ui_events.h
 
-````
+```
 
-- **Editar/estender:** `LVGL_Display.*`, `RTC_Module.*`, `SD_Module.*`
+- **Editar/estender:** `LVGL_Display.*`, `RTC_Module.*`, `SD_Module.*`  
 - **Não editar:** qualquer arquivo dentro de `src/UI/` (regerado pelo SquareLine)
 
 ---
 
-## Dependências de terceiros (alvo de integração)
+## Dependências (bibliotecas externas)
 
-- **Core ESP32 (Arduino):** recomendado `2.0.14`
-- **LVGL:** `8.3.11`
-- **TFT_eSPI** (controlador ILI9341)
-- **TFT_Touch** (controlador XPT2046)
-- **RTClib** (DS3231)
+- **Core ESP32 (Arduino):** recomendado `2.0.14`  
+- **LVGL:** `8.3.11`  
+- **TFT_eSPI** (controlador ILI9341)  
+- **TFT_Touch** (controlador XPT2046)  
+- **RTClib** (DS3231)  
 - **SD** (biblioteca SD do core ESP32)
 
-> Estas dependências são usadas **pelos módulos dentro de `src/`**; sua obtenção/instalação é responsabilidade do ambiente superior.
+> A instalação/gestão dessas libs é responsabilidade do ambiente superior. Os módulos em `src/` apenas as consomem.
 
 ---
 
 ## Pinos e interfaces relevantes
 
-- **SPI** compartilhado (display, touch, SD): fiação fixa da 2432S028R  
-- **CS (chip-select) do microSD:** **GPIO 5**
-- **I²C** recomendado para RTC/sensores: **SDA = GPIO 21**, **SCL = GPIO 22**
-- **Observação:** `GPIO 35` é **entrada** (ADC somente input)
+- **SPI** compartilhado (display, touch, SD): fiação fixa da 2432S028R.  
+- **CS (chip-select) do microSD:** **GPIO 5**.  
+- **I²C** recomendado para RTC/sensores: **SDA = GPIO 21**, **SCL = GPIO 22**.  
+- **Observação:** `GPIO 35` é **apenas entrada** (ADC).
 
 ---
 
-## Ordem sugerida de chamadas (nível de biblioteca)
+## LVGL_Display — implementação atual (LVGL_Display.cpp)
 
-1. `lvgl_display_init()`  
-2. `ui_init()`  *(fornecido em `src/UI/`)*  
-3. `rtc_init()`  
-4. `CSV_begin()`  
-5. `openDailyIfNeeded()`  
-6. `CSV_appendRow(...)` conforme aquisição de sensores  
-7. `CSV_close()` ao finalizar sessão ou desligamento controlado
+**Resumo do que o módulo faz:**
+- Inicializa o TFT (TFT_eSPI), define rotação **1** (landscape) e limpa a tela.  
+- Inicializa o touch (TFT_Touch) **com calibração fixa**: `touch.setCal(526, 3443, 750, 3377, screenWidth, screenHeight, 1)`  
+- Inicializa a LVGL, cria **um único draw buffer** estático e registra:
+  - `my_disp_flush(...)` → envia a área renderizada para o ILI9341 via `tft.pushColors(...)`;
+  - `my_touchpad_read(...)` → lê o XPT2046 e alimenta o input pointer da LVGL.
+- Registra `disp_drv` (display) e `indev_drv` (touch) na LVGL.
 
-> A integração e o agendamento dessas chamadas cabem à aplicação que consome `src/`.
+**Pinos do touch usados na implementação:**
+```
 
----
+DOUT = 39 (T_DO)
+DIN  = 32 (T_DIN)
+DCS  = 33 (T_CS)
+DCLK = 25 (T_CLK)
 
-## Módulos e APIs
+````
 
-### LVGL_Display
-**Arquivos:** `LVGL_Display.h/.cpp`  
-**Responsabilidade:** inicialização do display ILI9341 (via TFT_eSPI), integração do touch XPT2046 (TFT_Touch), registro de *flush* e *input* com a LVGL.
+**Buffers e tamanhos:**
+- `screenWidth = 320`, `screenHeight = 240` (definidos no header).  
+- `static lv_color_t buf[screenWidth * screenHeight / 4];` cria um buffer de ~19.200 pixels (¼ da tela).  
+- Na inicialização do draw buffer, **o terceiro parâmetro** (segundo buffer) é **nulo** (single buffer).  
+  - Boas-práticas: o parâmetro `size_in_px_cnt` deve corresponder ao tamanho real do buffer (em **pixels**). Em geral, usar `sizeof(buf) / sizeof(buf[0])`.
 
-**API pública:**
+**Notas úteis:**
+- Para C++, prefira `nullptr` em vez de `NULL` ao indicar ausência de segundo buffer.  
+- Se houver “*flicker*” ou subutilização do buffer, ajuste o `size_in_px_cnt` para refletir o tamanho exato do `buf`.  
+- A calibração do touch é específica do módulo/lote; re-calibre se necessário e atualize os parâmetros no código.
+
+**API pública deste módulo:**
 ```cpp
 void lvgl_display_init();
 ````
 
 ---
 
-### RTC_Module
-
-**Arquivos:** `RTC_Module.h/.cpp`
-**Responsabilidade:** encapsular o DS3231 (RTClib) e fornecer leitura de data/hora.
+## RTC_Module — API e comportamento
 
 **API pública:**
 
@@ -91,17 +98,14 @@ void     rtc_init();
 DateTime rtc_getTime();
 ```
 
-**Comportamento:**
+**Comportamentos relevantes (utilizados pelo SD_Module):**
 
-* Se o RTC estiver sem hora, o módulo ajusta para a data/hora de compilação como *fallback*.
-* Em caso de ausência física do RTC, `rtc_getTime()` não é confiável; ver política de *fallback* do CSV abaixo.
+* Validação de data/hora por faixa simples (anos 2020–2099, campos válidos).
+* *Fallback* seguro: quando o RTC não é válido/ausente, usa-se `2000-01-01 00:00:00` para registro.
 
 ---
 
-### SD_Module
-
-**Arquivos:** `SD_Module.h/.cpp`
-**Responsabilidade:** estrutura de diretórios no microSD e gravação de linhas CSV com metadados padronizados.
+## SD_Module — API, caminhos e comportamento
 
 **API pública:**
 
@@ -114,23 +118,45 @@ bool  CSV_appendRow(const char* userId,
                     double      valor,
                     const char* unidade);
 void  CSV_close();
+
+// Mantido como stub (sem rotação automática atualmente)
+bool  CSV_rotateIfNeeded(); // sempre retorna true
 ```
 
-**Regras internas (resumo):**
+**Comportamentos implementados:**
 
-* Garante existência dos diretórios-base.
-* Abre/cria o arquivo do **dia corrente** (ou `UNSET` caso RTC inválido).
-* Escreve **cabeçalho** se o arquivo estiver vazio.
-* Ao detectar arquivo antigo **sem cabeçalho**, renomeia para `*_nohdr.csv` e cria um novo arquivo com cabeçalho.
+* `CSV_begin()`
+
+  * Inicializa o SD (CS=5), garante `/MBI`, `/MBI/CSV` e a pasta do **ano** atual;
+  * Sem RTC válido → usa pasta `/MBI/CSV/UNSET`.
+* `openDailyIfNeeded()`
+
+  * Constrói o caminho do arquivo do dia (`/MBI/CSV/<ANO>/MBI_<YYYYMMDD>.csv` ou `/MBI/CSV/UNSET/MBI_UNSET.csv`);
+  * Abre em `FILE_APPEND`; se o arquivo estiver **vazio**, grava o **cabeçalho**;
+  * Mantém estado interno: arquivo aberto, data corrente e caminho atual.
+* `CSV_appendRow(...)`
+
+  * Monta a linha `DataHora,UserID,SessionID,Sensor,Valor,Unidade,DeviceID,FwVersion,TZ,Seq`;
+  * Usa *fallback* de timestamp (`2000-01-01 00:00:00`) se RTC inválido;
+  * Concatena valores padrão `"-"` para parâmetros nulos;
+  * `flush()` imediato após cada linha (MVP simples e seguro).
+* `CSV_close()`
+
+  * `flush()` e fecha o arquivo, limpando o estado interno.
+
+**Caminhos de arquivo/pasta:**
+
+* RTC **válido** → `/MBI/CSV/<ANO>/MBI_<YYYYMMDD>.csv`
+* RTC **inválido/ausente** → `/MBI/CSV/UNSET/MBI_UNSET.csv`
 
 ---
 
-## CSV — Especificação funcional
+## CSV — especificação funcional
 
 ### Layout de pastas
 
-* Arquivos por dia em: `MBI/CSV/<ANO>/MBI_<YYYYMMDD>.csv`
-* Se a data **não** puder ser obtida (RTC inválido): `MBI/CSV/UNSET/MBI_UNSET.csv`
+* Arquivos **por dia** em: `MBI/CSV/<ANO>/MBI_<YYYYMMDD>.csv`
+* Se a data **não** puder ser obtida (RTC inválido/ausente): `MBI/CSV/UNSET/MBI_UNSET.csv`
 
 ### Colunas e formatos
 
@@ -141,53 +167,55 @@ void  CSV_close();
 5. **Valor** — número decimal (`.`)
 6. **Unidade** — `C | bpm | % | kOhm | mV | ...`
 7. **DeviceID** — ex.: `MBI-ESP32-01`
-8. **FwVersion** — ex.: `v0.3.0`
+8. **FwVersion** — ex.: `v0.1.0`
 9. **TZ** — ex.: `-03:00`
 10. **Seq** — contador incremental por arquivo
 
-### Limites e robustez
+### Cabeçalho (estado atual)
 
-* **Tamanho por arquivo:** 50 MB (sem rotação automática por ora)
-* **Flush:** MVP efetua `flush()` a cada `append` (simples e seguro).
-* **Falhas de escrita:** pausa tentativa, mantém dados em memória até reabertura.
-* **Sem SD:** sinalizar para a camada de UI desabilitar ações de gravação.
+* O módulo **escreve o cabeçalho somente quando cria um arquivo novo** (tamanho `0`).
+* **Não há verificação de cabeçalho** em arquivos existentes (não implementado por design neste estágio).
 
-### Manifest (opcional)
+### Limites e política de flush
 
-* Arquivo: `MBI.manifest.csv`
-* Campos: `Arquivo,Data,Inicio,Termino,Linhas,DeviceID,FwVersion,Hash`
-* Pode ser preenchido quando o arquivo diário for fechado pela aplicação.
+* **Tamanho por arquivo:** limite lógico de **50 MB** (sem rotação automática por ora).
+* **Flush:** MVP faz `flush()` **a cada `append`** (simples e seguro).
 
 ---
 
-## Convenções internas de implementação
+## Ordem sugerida de uso (nível de biblioteca)
+
+1. `lvgl_display_init()`
+2. `ui_init()` *(fornecido em `src/UI/`)*
+3. `rtc_init()`
+4. `CSV_begin()`
+5. `openDailyIfNeeded()`
+6. `CSV_appendRow(...)` conforme aquisição de sensores
+7. `CSV_close()` ao finalizar uma sessão/desligamento controlado
+
+> O agendamento/ciclo dessas chamadas é definido pela aplicação que consome a biblioteca.
+
+---
+
+## Logs/diagnóstico esperados (Serial)
+
+* `Cartão SD lido com sucesso` — SD inicializado (CS=5)
+* `Criando pasta 'MBI'` / `ERRO: mkdir /MBI`
+* `Criando pasta 'CSV' em '/MBI/'` / `ERRO: mkdir /MBI/CSV`
+* `Criando pasta do ano (ou UNSET): /MBI/CSV/2025` / `ERRO: mkdir ...`
+* `[SD] ERRO: não foi possível abrir /MBI/CSV/2025/MBI_YYYYMMDD.csv`
+
+Esses logs auxiliam a camada superior a informar o usuário/registrar telemetria.
+
+---
+
+## Convenções internas
 
 * **Estado estático** encapsulado em **namespace anônimo** (escopo do `.cpp`).
-* **Constantes** no padrão `kCamelCase` (ex.: `kHeader`, `kFwVersion`).
-* **Buffers fixos** e `snprintf()` no caminho crítico de I/O para evitar alocação dinâmica.
-* **Serial logs** claros para diagnóstico (erros de `begin/open/append/flush`).
-* **Sem dependência cíclica** entre módulos; `SD_Module` consome `RTC_Module` apenas para data/hora.
-
----
-
-## Diagnóstico (mensagens esperadas)
-
-* `[SD] OK! CS=5` — cartão inicializado
-* `[SD] mkdir ...` / `ERRO: mkdir ...` — criação de diretórios
-* `[SD] opened: /MBI/CSV/YYYY/MBI_YYYYMMDD.csv` — arquivo ativo do dia
-* `[SD] header written` — cabeçalho gerado
-* `[SD] append ok` / `append FAIL` — resultado da escrita da linha
-
-> A aplicação superior pode consumir estas mensagens para telemetria/UX.
-
----
-
-## Compatibilidade e versões alvo
-
-* **ESP32 core:** 2.0.14
-* **LVGL:** 8.3.11
-* **Armazenamento:** microSD em **FAT32**
-* **CS do SD:** GPIO **5**
+* **Constantes** no padrão `kCamelCase` (ex.: `kHeader`, `kFwVersion`, `kTzStr`).
+* **Buffers fixos** (`snprintf`) para evitar alocações dinâmicas no caminho crítico de I/O.
+* **`nullptr`** para parâmetros ponteiro opcionais; arrays (`char[ ]`) são inicializados com `{0}`.
+* Em `LVGL_Display.cpp`, o objeto `TFT_eSPI tft` e as *callbacks* de flush/input são **locais ao TU**, mantendo encapsulamento do driver.
 
 ---
 
@@ -195,22 +223,33 @@ void  CSV_close();
 
 **Curto prazo:**
 
-* Sanitização consistente de `UserID`/`SessionID` (remover vírgulas, CR/LF, limitar comprimento).
-* Opção de **flush temporizado** (ex.: a cada 2 s) em vez de `flush()` por `append`.
-* Sinalização para UI: desabilitar ações quando `sd_ok == false` e exibir toasts de erro de gravação.
+* **Sanitização de campos**: remover vírgulas e CR/LF de `UserID`/`SessionID`; limitar tamanho (ex.: 32 chars).
+* **Sinalização para UI**: quando `sd_ok == false`, desabilitar ações de gravação e exibir aviso.
+* **Ajuste do draw buffer**: alinhar `size_in_px_cnt` ao tamanho real de `buf` (`sizeof(buf)/sizeof(buf[0])`) para melhor eficiência.
 
 **Médio prazo:**
 
-* Integração de sensores: **MAX30102** (BPM/SpO₂), **MLX90614** (TEMP), **GSR** (kΩ), **ECG_BPM** (mV + derivação de BPM).
-* Geração de `SessionID` na entrada do modo de registro (`YYYYMMDD-##`).
-* Se houver múltiplas tarefas de aquisição: proteger SD com **mutex** e centralizar I/O numa **task** de logger.
+* **Flush temporizado** (opcional): substituir `flush()` por append por uma política de 2 s baseada em timer.
+* **Integração de sensores**: MAX30102 (BPM/SpO₂), MLX90614 (TEMP), GSR (kΩ), ECG_BPM (mV + BPM derivado).
+* **SessionID**: geração consistente ao entrar no Modo Registro (`YYYYMMDD-##`).
+* **Concorrência**: se houver tarefas paralelas (FreeRTOS), proteger o SD com **mutex** e concentrar escrita numa **task** de logger.
 
 **Depois (se necessário):**
 
-* Rotação por tamanho (50 MB) com sufixos incrementais e atualização de `manifest`.
-* Versão de cabeçalho no CSV + rotina de migração.
-* Card-detect (se disponível no hardware) para *hotplug* mais amigável.
-* `manifest` com `Hash` (CRC32 ou SHA-1) ao fechar arquivo diário.
+* **Verificação de cabeçalho** em arquivos existentes (renomear `*_nohdr.csv` quando divergente)
+* **Rotação por tamanho** (50 MB) com sufixos incrementais e `manifest` opcional.
+* **Card-detect** (se disponível) para *hotplug* mais amigável e feedback imediato.
+* **Versão de cabeçalho** e rotina de migração entre versões.
 
 ---
 
+## Compatibilidade e suporte
+
+* **ESP32 core:** 2.0.14
+* **LVGL:** 8.3.11
+* **Armazenamento:** microSD em **FAT32**
+* **CS do SD:** **GPIO 5**
+
+```
+::contentReference[oaicite:0]{index=0}
+```
