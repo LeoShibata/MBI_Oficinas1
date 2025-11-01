@@ -20,8 +20,8 @@ extern lv_obj_t * ui_Label6;
 extern void ui_event_BTCarregarDados(lv_event_t * e);
 extern lv_obj_t * ui_BTCarregarDados;
 extern lv_obj_t * ui_Label7;
-extern void ui_event_Button3(lv_event_t * e);
-extern lv_obj_t * ui_Button3;
+extern void ui_event_backButton3(lv_event_t * e);
+extern lv_obj_t * ui_backButton3;
 extern lv_obj_t * ui_Label13;
 // CUSTOM VARIABLES
 

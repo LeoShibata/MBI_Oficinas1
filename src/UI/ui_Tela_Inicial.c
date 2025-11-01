@@ -13,7 +13,7 @@ void ui_event_Tela_Inicial(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_RELEASED) {
-        _ui_screen_change(&ui_Selecao_de_Modo, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Selecao_de_Modo_screen_init);
+        _ui_screen_change(&ui_Selecao_de_Modo, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_Selecao_de_Modo_screen_init);
     }
     if(event_code == LV_EVENT_SCREEN_LOADED) {
         Blink_Animation(ui_Label1, 0);

@@ -78,10 +78,12 @@ void ui_init(void)
     lv_disp_set_theme(dispp, theme);
     ui_Tela_Inicial_screen_init();
     ui_Selecao_de_Modo_screen_init();
-    ui_Modo_Consulta_screen_init();
     ui_Modo_Registro_screen_init();
     ui_Novo_Registro_screen_init();
     ui_Carregar_Dados_screen_init();
+    ui_Instrumento_screen_init();
+    ui_Termometro_screen_init();
+    ui_Oximetro_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_Tela_Inicial);
 }
@@ -90,8 +92,10 @@ void ui_destroy(void)
 {
     ui_Tela_Inicial_screen_destroy();
     ui_Selecao_de_Modo_screen_destroy();
-    ui_Modo_Consulta_screen_destroy();
     ui_Modo_Registro_screen_destroy();
     ui_Novo_Registro_screen_destroy();
     ui_Carregar_Dados_screen_destroy();
+    ui_Instrumento_screen_destroy();
+    ui_Termometro_screen_destroy();
+    ui_Oximetro_screen_destroy();
 }

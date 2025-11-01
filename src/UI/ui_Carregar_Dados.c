@@ -7,10 +7,10 @@
 
 lv_obj_t * ui_Carregar_Dados = NULL;
 lv_obj_t * ui_Label9 = NULL;
-lv_obj_t * ui_Button4 = NULL;
+lv_obj_t * ui_backButton4 = NULL;
 lv_obj_t * ui_Label15 = NULL;
 // event funtions
-void ui_event_Button4(lv_event_t * e)
+void ui_event_backButton4(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
@@ -34,24 +34,24 @@ void ui_Carregar_Dados_screen_init(void)
     lv_obj_set_align(ui_Label9, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label9, "(. . .)");
 
-    ui_Button4 = lv_btn_create(ui_Carregar_Dados);
-    lv_obj_set_width(ui_Button4, 90);
-    lv_obj_set_height(ui_Button4, 35);
-    lv_obj_set_x(ui_Button4, -110);
-    lv_obj_set_y(ui_Button4, 95);
-    lv_obj_set_align(ui_Button4, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Button4, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_Button4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Button4, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Button4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_backButton4 = lv_btn_create(ui_Carregar_Dados);
+    lv_obj_set_width(ui_backButton4, 90);
+    lv_obj_set_height(ui_backButton4, 35);
+    lv_obj_set_x(ui_backButton4, -110);
+    lv_obj_set_y(ui_backButton4, 95);
+    lv_obj_set_align(ui_backButton4, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_backButton4, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_backButton4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_backButton4, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_backButton4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Label15 = lv_label_create(ui_Button4);
+    ui_Label15 = lv_label_create(ui_backButton4);
     lv_obj_set_width(ui_Label15, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label15, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label15, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label15, "Voltar");
 
-    lv_obj_add_event_cb(ui_Button4, ui_event_Button4, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_backButton4, ui_event_backButton4, LV_EVENT_ALL, NULL);
 
 }
 
@@ -62,7 +62,7 @@ void ui_Carregar_Dados_screen_destroy(void)
     // NULL screen variables
     ui_Carregar_Dados = NULL;
     ui_Label9 = NULL;
-    ui_Button4 = NULL;
+    ui_backButton4 = NULL;
     ui_Label15 = NULL;
 
 }

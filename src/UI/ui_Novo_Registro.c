@@ -6,7 +6,7 @@
 #include "ui.h"
 
 lv_obj_t * ui_Novo_Registro = NULL;
-lv_obj_t * ui_Button5 = NULL;
+lv_obj_t * ui_backButton5 = NULL;
 lv_obj_t * ui_Label14 = NULL;
 lv_obj_t * ui_Keyboard4 = NULL;
 lv_obj_t * ui_TextArea2 = NULL;
@@ -21,7 +21,7 @@ void ui_event_Novo_Registro(lv_event_t * e)
     }
 }
 
-void ui_event_Button5(lv_event_t * e)
+void ui_event_backButton5(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
@@ -49,18 +49,18 @@ void ui_Novo_Registro_screen_init(void)
     lv_obj_set_style_bg_grad_color(ui_Novo_Registro, lv_color_hex(0x003F83), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_grad_dir(ui_Novo_Registro, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Button5 = lv_btn_create(ui_Novo_Registro);
-    lv_obj_set_width(ui_Button5, 90);
-    lv_obj_set_height(ui_Button5, 35);
-    lv_obj_set_x(ui_Button5, -110);
-    lv_obj_set_y(ui_Button5, 95);
-    lv_obj_set_align(ui_Button5, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Button5, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_Button5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Button5, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Button5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_backButton5 = lv_btn_create(ui_Novo_Registro);
+    lv_obj_set_width(ui_backButton5, 90);
+    lv_obj_set_height(ui_backButton5, 35);
+    lv_obj_set_x(ui_backButton5, -110);
+    lv_obj_set_y(ui_backButton5, 95);
+    lv_obj_set_align(ui_backButton5, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_backButton5, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_backButton5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_backButton5, lv_color_hex(0x525252), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_backButton5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Label14 = lv_label_create(ui_Button5);
+    ui_Label14 = lv_label_create(ui_backButton5);
     lv_obj_set_width(ui_Label14, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label14, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label14, LV_ALIGN_CENTER);
@@ -95,7 +95,7 @@ void ui_Novo_Registro_screen_init(void)
     lv_obj_set_align(ui_Label10, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label10, "dd/mm/aa hh::mm::ss");
 
-    lv_obj_add_event_cb(ui_Button5, ui_event_Button5, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_backButton5, ui_event_backButton5, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_TextArea2, ui_event_TextArea2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Novo_Registro, ui_event_Novo_Registro, LV_EVENT_ALL, NULL);
 
@@ -107,7 +107,7 @@ void ui_Novo_Registro_screen_destroy(void)
 
     // NULL screen variables
     ui_Novo_Registro = NULL;
-    ui_Button5 = NULL;
+    ui_backButton5 = NULL;
     ui_Label14 = NULL;
     ui_Keyboard4 = NULL;
     ui_TextArea2 = NULL;

@@ -15,8 +15,8 @@ extern void ui_Carregar_Dados_screen_init(void);
 extern void ui_Carregar_Dados_screen_destroy(void);
 extern lv_obj_t * ui_Carregar_Dados;
 extern lv_obj_t * ui_Label9;
-extern void ui_event_Button4(lv_event_t * e);
-extern lv_obj_t * ui_Button4;
+extern void ui_event_backButton4(lv_event_t * e);
+extern lv_obj_t * ui_backButton4;
 extern lv_obj_t * ui_Label15;
 // CUSTOM VARIABLES
 

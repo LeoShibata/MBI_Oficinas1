@@ -20,10 +20,12 @@ extern "C" {
 
 #include "ui_Tela_Inicial.h"
 #include "ui_Selecao_de_Modo.h"
-#include "ui_Modo_Consulta.h"
 #include "ui_Modo_Registro.h"
 #include "ui_Novo_Registro.h"
 #include "ui_Carregar_Dados.h"
+#include "ui_Instrumento.h"
+#include "ui_Termometro.h"
+#include "ui_Oximetro.h"
 
 ///////////////////// VARIABLES ////////////////////
 

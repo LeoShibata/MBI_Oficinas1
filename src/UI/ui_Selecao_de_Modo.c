@@ -17,7 +17,7 @@ void ui_event_BTModoConsulta(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Modo_Consulta, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Modo_Consulta_screen_init);
+        _ui_screen_change(&ui_Instrumento, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Instrumento_screen_init);
     }
 }
 
