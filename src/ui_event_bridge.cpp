@@ -9,7 +9,7 @@
 #include "lvgl.h"
 
 // Função auxiliar interna para pegar o tempo do RTC de forma segura
-static DataTime rtc_now_safe_cpp(bool* ok = nullptr) {
+static DateTime rtc_now_safe_cpp(bool* ok = nullptr) {
     DateTime t = rtc_getTime();
     // Checagem de sanidade simples
     bool valid = (t.year() >= 2020 && t.year() <= 2029 &&
@@ -22,13 +22,13 @@ static DataTime rtc_now_safe_cpp(bool* ok = nullptr) {
     return t;
 }
 
-extern "C" void app_start_logging_session(const char* userId) {
-    (isLoggingActive) {
+void app_start_logging_session(const char* userId) {
+    if(isLoggingActive) {
         // Já estava logado
         app_stop_logging_session();
     }
 
-    if(!userIde || *userId == '\0') {
+    if(!userId || *userId == '\0') {
         Serial.println("[Event_Bridge] Nao pode iniciar log: UserId está vazio.");
         return;
     }
@@ -67,7 +67,7 @@ extern "C" void app_start_logging_session(const char* userId) {
 }
 
 // Implementação da função C que será chamada pela UI
-extern "C" void app_stop_logging_session(void) {
+void app_stop_logging_session(void) {
     if(!isLoggingActive) {
         return; // Nada a fazer
     }
@@ -84,7 +84,7 @@ extern "C" void app_stop_logging_session(void) {
 }
 
 // Implementação da função C que será chamada pela UI
-extern "C" void app_load_data_preview(lv_obj_t* label) {
+void app_load_data_preview(lv_obj_t* label) {
     if (!label) 
         return;
 
@@ -93,7 +93,7 @@ extern "C" void app_load_data_preview(lv_obj_t* label) {
     
     if (!path || !*path) {
         char fallback_path[64];
-        build_paths_safe(nullptr, 0, fallback_path, sizeof(fallback_path), nullptr, nullptr);
+        build_path_safe(nullptr, 0, fallback_path, sizeof(fallback_path), nullptr, nullptr);
         path = fallback_path;
         
         if (!SD.exists(path)) {

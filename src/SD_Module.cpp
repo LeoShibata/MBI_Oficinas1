@@ -2,12 +2,15 @@
 #include "RTC_Module.h"
 #include <Arduino.h>
 #include <SD.h>
+#include <SPI.h>
 #include <cstring>
 
 bool sd_ok = false;
 File s_file;
-bool isOpen = false;
+bool isOpen = false; 
 char current_path[64] = {0};
+
+SPIClass spi_sd(VSPI);
 
 namespace {
     const int sd_cs = 5;
@@ -42,9 +45,9 @@ static DateTime rtc_now_safe(bool* ok = nullptr) {
     return t;
 }
 
-static void build_paths_safe(char* dir_year, size_t dir_sz,
-                             char* file_path, size_t path_sz,
-                             int* today_out, bool* rtc_ok_out)
+void build_path_safe(char* dir_year, size_t dir_sz,
+                     char* file_path, size_t path_sz,
+                     int* today_out, bool* rtc_ok_out)
 {
     bool ok = false;
     DateTime now = rtc_now_safe(&ok);
@@ -71,7 +74,11 @@ static void build_paths_safe(char* dir_year, size_t dir_sz,
 }
 
 static bool check_SD() {
-    sd_ok = SD.begin(sd_cs);
+    Serial.println("Inicializando barramento SPI para o SD Card...");
+    
+    // Inicializa o barramento SPI
+    spi_sd.begin(18, 19, 23);
+    sd_ok = SD.begin(sd_cs, spi_sd);
     if(!sd_ok){
         Serial.println("Cartão SD não inserido ou falha na leitura.");
         return false;
@@ -105,7 +112,7 @@ void CSV_init() {
 
     char dir_year[32];
     char dummy_path[4];
-    build_paths_safe(dir_year, sizeof(dir_year), dummy_path, sizeof(dummy_path), nullptr, nullptr);
+    build_path_safe(dir_year, sizeof(dir_year), dummy_path, sizeof(dummy_path), nullptr, nullptr);
 
     if(!SD.exists(dir_year)) {
         Serial.print("Criando pasta do ano (ou UNSET): ");
@@ -149,7 +156,7 @@ bool openDailyIfNeeded() {
     char dir_year[32];
     char path[64];
     bool rtc_ok = false;
-    build_paths_safe(dir_year, sizeof(dir_year), path, sizeof(path), &today, &rtc_ok);
+    build_path_safe(dir_year, sizeof(dir_year), path, sizeof(path), &today, &rtc_ok);
 
     if (isOpen && current_yyyymmdd == today) {
         return true;
@@ -188,7 +195,7 @@ bool openDailyIfNeeded() {
         current_path[sizeof(current_path)-1] = '\0';
     } else {
         strncpy(current_path, path, sizeof(current_path));
-        current_path[sizeof(current_path)-1] = '\0'
+        current_path[sizeof(current_path)-1] = '\0';
     }
 
     if(need_header) {

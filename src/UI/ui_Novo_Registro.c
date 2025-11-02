@@ -4,7 +4,7 @@
 // Project name: ui
 
 #include "ui.h"
-#include "../ui_event_bridge.h
+#include "../ui_event_bridge.h"
 
 lv_obj_t * ui_Novo_Registro = NULL;
 lv_obj_t * ui_backButton5 = NULL;
