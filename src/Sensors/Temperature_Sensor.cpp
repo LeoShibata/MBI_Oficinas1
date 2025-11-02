@@ -25,10 +25,11 @@ float read_temperature() {
 
     float temp = mlx.readObjectTempC();
 
+    // A biblioteca retorna NaN (Not-a-Number) se a leitura falhar
     if(isnan(temp)) {
         Serial.println("[Sensor] Failed to read the temperature (NaN).");
         return -999.f;
     }
 
-    return tmp;
+    return temp;
 }
