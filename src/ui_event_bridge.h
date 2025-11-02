@@ -3,8 +3,8 @@
 
 #include "lvgl.h"
 
-#ifdef __cpluscplus
-extern "c" {
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /**
@@ -28,7 +28,7 @@ void app_stop_logging_session(void);
  */
 void app_load_data_preview(lv_obj_t* label);
 
-#ifdef __cpluscplus
+#ifdef __cplusplus
 }
 #endif
 
