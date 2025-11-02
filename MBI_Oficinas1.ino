@@ -70,7 +70,7 @@ void loop() {
                           currentUserId, currentSessionId, currentTemp);
             
             // Salva a linha no arquivo CSV usando o valor já lido.
-            bool success = CVS_appendRow(currentUserId,
+            bool success = CSV_appendRow(currentUserId,
                                          currentSessionId,
                                          "Temperatura",
                                          (double)currentTemp,

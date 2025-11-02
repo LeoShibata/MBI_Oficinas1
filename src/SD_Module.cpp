@@ -188,7 +188,7 @@ bool openDailyIfNeeded() {
         current_path[sizeof(current_path)-1] = '\0';
     } else {
         strncpy(current_path, path, sizeof(current_path));
-        current_path[sizeof(current_path)-1] = '\0'
+        current_path[sizeof(current_path)-1] = '\0';
     }
 
     if(need_header) {
