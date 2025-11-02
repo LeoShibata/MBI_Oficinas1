@@ -34,13 +34,13 @@ void loop() {
         // Atualiza Relógio (Tela Novo_Registro)
         DateTime now = rtc_getTime();
         char rtc_buffer[32];
-        sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d",
+        sprintf(rtc_buffer, "%02d/%02d/%04d %02d:%02d:%02d",
             now.day(), now.month(), now.year(),
             now.hour(), now.minute(), now.second());
         
         // Atualiza label da UI (se tela estiver carregada)
         if(ui_Label10) {
-            lv_label_set_text(ui_Label10, buffer);
+            lv_label_set_text(ui_Label10, rtc_buffer);
         }
 
         // Lê a temperatura uma vez por ciclo
@@ -50,6 +50,7 @@ void loop() {
         char temp_buffer[16];
         snprintf(temp_buffer, sizeof(temp_buffer), "%.1f °C", currentTemp);
 
+        // Atualiza label da UI (se tela estiver carregada)
         if(ui_Label20) {
             lv_label_set_text(ui_Label20, temp_buffer);
         }
