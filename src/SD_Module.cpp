@@ -80,7 +80,7 @@ static bool check_SD() {
     return true;
 }
 
-void CSV_begin() {
+void CSV_init() {
     if(!check_SD()) {
         return;
     }

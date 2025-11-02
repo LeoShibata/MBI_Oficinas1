@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-void CSV_begin();
+void CSV_init();
 bool openDailyIfNeeded();
 bool CSV_rotateIfNeeded();  // stub no MVP
 bool CSV_appendRow(const char* userId,
