@@ -4,6 +4,7 @@
 // Project name: ui
 
 #include "ui.h"
+#include "../ui_event_bridge.h"
 
 lv_obj_t * ui_Carregar_Dados = NULL;
 lv_obj_t * ui_Label9 = NULL;
@@ -32,7 +33,11 @@ void ui_Carregar_Dados_screen_init(void)
     lv_obj_set_width(ui_Label9, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label9, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label9, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label9, "(. . .)");
+    lv_label_set_text(ui_Label9, "Carregando dados..."); // Texto inicial
+    lv_obj_set_width(ui_Label9, 300); // Define uma largura para quebra de linha
+    lv_label_set_long_mode(ui_Label9, LV_LABEL_LONG_WRAP); // Permite quebra de linha
+
+    app_load_data_preview(ui_Label9);
 
     ui_backButton4 = lv_btn_create(ui_Carregar_Dados);
     lv_obj_set_width(ui_backButton4, 90);

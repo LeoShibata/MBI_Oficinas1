@@ -1,11 +1,19 @@
 #include <Wire.h>
 
-#include "src/UI/ui.h"              
 #include "src/RTC_Module.h"
 #include "src/LVGL_Display.h"
 #include "src/SD_Module.h"
-
 #include "src/Sensors/Temperature_Sensor.h"
+
+#include "src/UI/ui.h"
+#include "src/globals.h"
+#include "src/ui_event_brigde.h"           
+
+//---------Variáveis Globais---------
+bool isLoggingActive = false;
+char currentUserId[64] = {0};
+char currentSessionId[32] = {0};
+//-----------------------------------
 
 unsigned long lastUpdate = 0;
 const unsigned long updateInterval = 1000;  // 1s
@@ -19,6 +27,7 @@ void setup() {
     lvgl_display_init();
     ui_init();
     rtc_init();
+    CSV_init();
     init_temperature_sensor();
 }
 
@@ -53,6 +62,23 @@ void loop() {
         // Atualiza label da UI (se tela estiver carregada)
         if(ui_Label20) {
             lv_label_set_text(ui_Label20, temp_buffer);
+        }
+
+        // Lógica de registro de dados 
+        if(isLoggingActive) {
+            Serial.printf("LOG: User=%, Sess=%s, Temp=%2.f C\n",
+                          currentUserId, currentSessionId, currentTemp);
+            
+            // Salva a linha no arquivo CSV usando o valor já lido.
+            bool success = CVS_appendRow(currentUserId,
+                                         currentSessionId,
+                                         "Temperatura",
+                                         (double)currentTemp,
+                                         "C");
+            
+            if(!success) {
+                Serial.println("Erro: Falha ao gravar no Sd Card.");
+            }
         }
     }
 }

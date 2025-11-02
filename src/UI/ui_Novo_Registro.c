@@ -4,6 +4,7 @@
 // Project name: ui
 
 #include "ui.h"
+#include "../ui_event_bridge.h
 
 lv_obj_t * ui_Novo_Registro = NULL;
 lv_obj_t * ui_backButton5 = NULL;
@@ -17,7 +18,14 @@ void ui_event_Novo_Registro(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
+        // Esconde teclado
         _ui_flag_modify(ui_Keyboard4, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+
+        // Pega o texto TextArea
+        const char* userName = lv_textarea_get_text(ui_TextArea2);
+
+        // Inicia a sessão de log 
+        app_start_logging_session(userName);
     }
 }
 
@@ -26,6 +34,9 @@ void ui_event_backButton5(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
+        // Clicando em voltar, para qualquer sessão de log ativa 
+        app_stop_logging_session();
+
         _ui_screen_change(&ui_Modo_Registro, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Modo_Registro_screen_init);
     }
 }
@@ -35,6 +46,9 @@ void ui_event_TextArea2(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
+        // Clicando em TextArea, para a sessão anterior
+        app_stop_logging_session();
+
         _ui_flag_modify(ui_Keyboard4, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_TOGGLE);
         _ui_keyboard_set_target(ui_Keyboard4,  ui_TextArea2);
     }
@@ -86,6 +100,7 @@ void ui_Novo_Registro_screen_init(void)
     lv_obj_set_y(ui_TextArea2, -45);
     lv_obj_set_align(ui_TextArea2, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextArea2, "Digite nome");
+    lv_textarea_set_one_line(ui_TextArea2, true);
 
     ui_Label10 = lv_label_create(ui_Novo_Registro);
     lv_obj_set_width(ui_Label10, LV_SIZE_CONTENT);   /// 1
