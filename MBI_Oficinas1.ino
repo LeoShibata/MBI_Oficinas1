@@ -7,7 +7,7 @@
 
 #include "src/UI/ui.h"
 #include "src/globals.h"
-#include "src/ui_event_brigde.h"           
+#include "src/ui_event_bridge.h"           
 
 //---------Variáveis Globais---------
 bool isLoggingActive = false;
