@@ -171,7 +171,7 @@ bool openDailyIfNeeded() {
         current_path[0] = '\0';
     }
 
-    CSV_begin();
+    CSV_init();
 
     File f = SD.open(path, FILE_APPEND);
     if (!f) {
