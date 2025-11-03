@@ -22,6 +22,13 @@ namespace {
   float g_spo2     = 0.0f;
   bool  g_has_spo2 = false;
 
+  float         g_bpm              = 0.0f;
+  bool          g_has_bpm          = false;
+  unsigned long g_sample_idx       = 0;
+  unsigned long g_last_peak_sample = 0;
+  double        g_prev2_ac         = 0.0;
+  double        g_prev1_ac         = 0.0;
+
   static inline float clampf(float x, float lo, float hi)
   {
     return (x < lo) ? lo : (x > hi) ? hi : x;
@@ -51,6 +58,13 @@ void ppg_reset()
 
   g_spo2     = 0.0f;
   g_has_spo2 = false;
+
+  g_bpm              = 0.0f;
+  g_has_bpm          = false;
+  g_sample_idx       = 0;
+  g_last_peak_sample = 0;
+  g_prev2_ac = 0.0;
+  g_prev1_ac = 0.0;
 }
 
 void ppg_setFingerThreshold(uint32_t ir_dc_min)
@@ -69,6 +83,48 @@ void ppg_feedSample(uint32_t red, uint32_t ir)
   g_ir_ac2_acc  += ir_ac  * ir_ac;
   g_red_ac2_acc += red_ac * red_ac;
   g_acc_count++;
+
+  const double        thr    = 0.005 * g_ir_dc;
+  const unsigned long refrac = (unsigned long)(0.30 * g_sps);
+
+  if (g_sample_idx >= 2)
+  {
+    const bool is_peak = (g_prev1_ac > g_prev2_ac) &&
+                         (g_prev1_ac > ir_ac)      &&
+                         (g_prev1_ac > thr);
+
+    const unsigned long since = g_sample_idx - g_last_peak_sample;
+
+    if (is_peak && since > refrac)
+    {
+      const unsigned long rr_samples =
+        (g_last_peak_sample == 0) ? 0 : (g_sample_idx - g_last_peak_sample);
+
+      g_last_peak_sample = g_sample_idx;
+
+      if (rr_samples > 0)
+      {
+        const float bpm_inst = (60.0f * (float)g_sps) / (float)rr_samples;
+
+        if (bpm_inst >= 30.0f && bpm_inst <= 220.0f)
+        {
+          if (g_has_bpm)
+          {
+            g_bpm = 0.8f * g_bpm + 0.2f * bpm_inst;
+          }
+          else
+          {
+            g_bpm    = bpm_inst;
+            g_has_bpm = true;
+          }
+        }
+      }
+    }
+  }
+
+  g_prev2_ac = g_prev1_ac;
+  g_prev1_ac = ir_ac;
+  g_sample_idx++;
 }
 
 void ppg_tick_1s()
@@ -140,3 +196,12 @@ float ppg_getSpO2()
   return g_spo2;
 }
 
+bool ppg_hasBPM()
+{
+  return g_has_bpm;
+}
+
+float ppg_getBPM()
+{
+  return g_bpm;
+}

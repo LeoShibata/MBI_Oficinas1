@@ -11,3 +11,5 @@ void ppg_tick_1s();
 bool  ppg_hasSpO2();
 float ppg_getSpO2();
 
+bool  ppg_hasBPM();
+float ppg_getBPM();
