@@ -1,169 +1,138 @@
+/*
+  Teste rápido do AD8232 usando a sua API
+
+  - Usa ad8232_init() e ad8232_read_ecg_mv()
+  - Amostragem ~200 Hz
+  - Imprime para o Serial Plotter duas séries:
+      ECG_mV  -> sinal centrado em mV (0 quando ainda ajustando baseline)
+      STATUS  -> 0 ok / 1 lead-off ou leitura inválida (-999)
+
+  Conexão (como no seu módulo):
+    ECG OUT -> GPIO35 (ADC)
+    LO+ / LO- não usados (definidos como -1 no módulo)
+*/
+
 #include <Arduino.h>
-#include <Wire.h>
+#include "src/Sensors/AD8232_Module.h"   // ajuste o caminho se estiver diferente
 
-#include "src/RTC_Module.h"
-#include "src/SD_Module.h"
+// Taxa de amostragem para leitura/print
+static const uint32_t SAMPLE_HZ = 200;
+static const uint32_t TS_US     = 1000000UL / SAMPLE_HZ;
 
-#include "src/Sensors/MAX30102_Module.h"
-#include "src/Algo/MAX30109_Processes.h"
-
-#include "src/Sensors/Temperature_Sensor.h"
-
-// ======= Configurações gerais =======
-static const int SDA_PIN = 27;
-static const int SCL_PIN = 22;
-
-static const int   kSPS     = 100;      // taxa esperada do MAX30102
-static const ulong kTickMs  = 1000;     // janela ~1s para consolidar SPO2/BPM
-
-static const char* kUser    = "TESTE";
-static const char* kSessionFallback = "YYYYMMDD-00"; // usado só se RTC inválido
-
-// ======= Estado de detecção =======
-static bool g_has_max  = false;
-static bool g_has_temp = false;
-
-// ======= Controle de janela =======
-static unsigned long g_lastTick = 0;
-static uint32_t g_samplesThisSec = 0;
-
-// ======= Helpers =======
-static void build_session_id(char* out, size_t n)
-{
-  DateTime t = rtc_getTime();
-  // Se o RTC estiver sem hora, cairá num valor “2000..”; tudo bem para teste
-  snprintf(out, n, "%04d%02d%02d-00", t.year(), t.month(), t.day());
-}
-
-void setup()
-{
+void setup() {
   Serial.begin(115200);
-  delay(100);
+  while (!Serial) {;}
 
-  Wire.begin(SDA_PIN, SCL_PIN);
+  Serial.println();
+  Serial.println(F("=== AD8232 - teste simples (Serial Plotter @115200) ==="));
+  Serial.println(F("Series: ECG_mV\tSTATUS"));
+  Serial.println(F("STATUS: 0=ok, 1=lead-off/invalid"));
 
-  rtc_init();      // tolera ausência e usa data "2000-01-01" como fallback
-  CSV_begin();     // prepara /MBI/CSV/<ANO>/MBI_<YYYYMMDD>.csv
-
-  // --- MAX30102 (SpO2/BPM) ---
-  g_has_max = max30102_begin();
-  if (g_has_max)
-  {
-    Serial.println("[MAX] OK");
-    ppg_init(kSPS);
-    // desliga o gate de dedo para garantir leitura agora; ligue depois se quiser:
-    ppg_setFingerThreshold(0);
-    max30102_start();
-  }
-  else
-  {
-    Serial.println("[MAX] AUSENTE (ou I2C/addr 0x57 falhou)");
-  }
-
-  // --- MLX90614 (Temperatura) ---
-  init_temperature_sensor();
-  // Tentativa rápida de leitura para inferir presença
-  float t0 = read_temperature();
-  g_has_temp = (!isnan(t0) && t0 > -200.0f && t0 < 120.0f);
-  if (g_has_temp) Serial.println("[MLX] OK");
-  else            Serial.println("[MLX] AUSENTE");
-
-  g_lastTick = millis();
-
-  Serial.println("[TEST] Rodando. Coloque o dedo no MAX; aguarde ~6–12 s para SpO2/BPM estáveis.");
+  ad8232_init();   // configura ADC e estabiliza baseline dentro do módulo
 }
 
-void loop()
-{
-  // ---------- Ingestão MAX30102 ----------
-  if (g_has_max)
-  {
-    while (max30102_available())
-    {
-      uint32_t red = 0, ir = 0;
-      if (max30102_readRaw(&red, &ir))
-      {
-        ppg_feedSample(red, ir);
-        g_samplesThisSec++;
-      }
-      else
-      {
-        break;
-      }
-    }
+void loop() {
+  static uint32_t t0 = micros();
+  const uint32_t now = micros();
+
+  if ((uint32_t)(now - t0) >= TS_US) {
+    t0 += TS_US;
+
+    // Lê sinal centrado em mV (ou -999 se lead-off/saturação)
+    const float mv = ad8232_read_ecg_mv();
+
+    // STATUS: 0 ok, 1 problema (lead-off / saturacao / inicializando)
+    const int status = (mv <= -998.0f) ? 1 : 0;
+
+    // Para o Serial Plotter, imprima colunas separadas por tab
+    Serial.print("ECG_mV:");
+    Serial.print(status ? 0.0f : mv, 3);
+    Serial.print('\t');
+    Serial.print("STATUS:");
+    Serial.println(status);
   }
-
-  // ---------- Tick ~1s para consolidar SPO2/BPM ----------
-  const unsigned long now = millis();
-  if (now - g_lastTick >= kTickMs)
-  {
-    g_lastTick = now;
-
-    // Sessão e time decoram cada linha no CSV
-    char session[20];
-    build_session_id(session, sizeof(session));
-
-    // Diagnóstico de taxa de amostragem do MAX
-    if (g_has_max)
-    {
-      Serial.print("[DBG] MAX samples/s = ");
-      Serial.println((unsigned long)g_samplesThisSec);
-    }
-    g_samplesThisSec = 0;
-
-    // Fecha janela do PPG (SpO2/BPM)
-    if (g_has_max)
-    {
-      ppg_tick_1s();
-
-      if (ppg_hasSpO2())
-      {
-        const float spo2 = ppg_getSpO2();
-        bool ok = CSV_appendRow(kUser, session, "SPO2", (double)spo2, "%");
-        Serial.print("[SPO2] ");
-        Serial.print(spo2, 1);
-        Serial.print(" %, CSV=");
-        Serial.println(ok ? "OK" : "ERRO");
-      }
-      else
-      {
-        Serial.println("[SPO2] aguardando janela/condições…");
-      }
-
-      if (ppg_hasBPM())
-      {
-        const float bpm = ppg_getBPM();
-        bool ok = CSV_appendRow(kUser, session, "BPM", (double)bpm, "bpm");
-        Serial.print("[BPM] ");
-        Serial.print(bpm, 1);
-        Serial.print(" bpm, CSV=");
-        Serial.println(ok ? "OK" : "ERRO");
-      }
-      else
-      {
-        Serial.println("[BPM] ainda não detectado…");
-      }
-    }
-
-    // ---------- Temperatura ----------
-    if (g_has_temp)
-    {
-      float tc = read_temperature(); // retorna -999 em falha
-      if (!isnan(tc) && tc > -200.0f && tc < 120.0f)
-      {
-        bool ok = CSV_appendRow(kUser, session, "TEMP_C", (double)tc, "C");
-        Serial.print("[TEMP] ");
-        Serial.print(tc, 2);
-        Serial.print(" C, CSV=");
-        Serial.println(ok ? "OK" : "ERRO");
-      }
-      else
-      {
-        Serial.println("[TEMP] leitura inválida");
-      }
-    }
-  }
-
-  delay(2);
 }
 
+
+#include <Arduino.h>
+#include "src/Sensors/GSR_Module.h"
+
+// === Ajuste aos seus valores ===
+static constexpr int    GSR_ADC_PIN = 35;       // seu pino do nó
+static constexpr float  VCC         = 3.3f;     // alimentação
+static constexpr float  R_FIXO_OHM  = 1000000.0f; // 1 MΩ do divisor
+static constexpr uint16_t ADC_FS    = 4095;     // ESP32 12 bits
+
+// Faixa "crível" de teste em µS (descarta outliers antes da média)
+static constexpr float MIN_US = 0.05f;
+static constexpr float MAX_US = 50.0f;
+
+// --- Conversões simples para debug cru (independente do módulo) ---
+static float readMicroSiemensOnce() {
+  int raw = analogRead(GSR_ADC_PIN);
+  if (raw <= 0 || raw >= ADC_FS) return -1.0f;
+
+  float v = (float)raw * VCC / (float)ADC_FS;
+  if (v <= 0.01f || v >= (VCC - 0.01f)) return -1.0f;
+
+  // Divisor: Rpele fica "abaixo" do nó, Rfixo "acima"
+  float r_skin = R_FIXO_OHM * (v / (VCC - v));
+  if (!(r_skin > 0.0f)) return -1.0f;
+
+  float uS = 1.0e6f / r_skin; // G = 1/R, em µS
+  return uS;
+}
+
+static float readMicroSiemensAvg(int n) {
+  int ok = 0; 
+  float sum = 0.0f;
+  for (int i = 0; i < n; ++i) {
+    float u = readMicroSiemensOnce();
+    if (u > 0.0f && u >= MIN_US && u <= MAX_US) {
+      sum += u; 
+      ok++;
+    }
+    delay(2);
+  }
+  return ok ? (sum / ok) : -1.0f;
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(200);
+
+#if defined(ARDUINO_ARCH_ESP32)
+  analogSetPinAttenuation(GSR_ADC_PIN, ADC_11db); // mede ~0..3.3V
+  analogSetWidth(12);
+#endif
+  pinMode(GSR_ADC_PIN, INPUT);
+
+  // Inicializa a sua API (faz baseline e índice 0..100)
+  gsr_init();
+
+  Serial.println(F("Teste GSR: imprime uS médio (filtrado) e Stress 0..100"));
+  Serial.println(F("Toque um dedo no GND e outro no nó do divisor (moeda/jumper)."));
+}
+
+void loop() {
+  // µS médio para depuração crua
+  float uS_avg  = readMicroSiemensAvg(20);
+
+  // Índice 0..100 da sua API (retorna -999 se inválido)
+  float stress  = gsr_read_stress();
+
+  // Também loga tensão instantânea no nó (ajuda a ver saturação)
+  int   raw     = analogRead(GSR_ADC_PIN);
+  float v_node  = (float)raw * VCC / (float)ADC_FS;
+
+  Serial.print(F("uS_avg="));
+  if (uS_avg < 0) Serial.print(F("invalid")); else Serial.print(uS_avg, 3);
+
+  Serial.print(F(" | stress="));
+  if (stress < -100) Serial.print(F("invalid")); else Serial.print(stress, 1);
+
+  Serial.print(F(" | Vnode="));
+  Serial.println(v_node, 3);
+
+  delay(200);
+}

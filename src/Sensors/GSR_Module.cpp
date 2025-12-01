@@ -1,11 +1,11 @@
 #include "GSR_Module.h"
 #include <Arduino.h>
 
-// Divisor fixo
-static constexpr uint8_t  GSR_ADC_PIN   = 34;        // ADC1
+// Divisor fixo (moedas ↔ pele ↔ nó → ADC35; do nó também vai um resistor de 1 MΩ para 3V3)
+static constexpr uint8_t  GSR_ADC_PIN   = 35;         // ADC1_CH7 (só entrada)
 static constexpr float    VCC_VOLTS     = 3.3f;
-static constexpr float    R_FIXO_OHM    = 220000.0f; // 220 kΩ
-static constexpr uint16_t ADC_FULLSCALE = 4095;      // 12 bits
+static constexpr float    R_FIXO_OHM    = 1000000.0f; // 1 MΩ
+static constexpr uint16_t ADC_FULLSCALE = 4095;       // 12 bits
 
 // Estado
 static bool  g_ready         = false;
@@ -34,8 +34,10 @@ static float read_microSiemens_once() {
 }
 
 void gsr_init() {
+#if defined(ARDUINO_ARCH_ESP32)
   analogSetPinAttenuation(GSR_ADC_PIN, ADC_11db); // mede até ~3.3 V
   analogSetWidth(12);
+#endif
   pinMode(GSR_ADC_PIN, INPUT);
   g_ready = true;
   g_has_base = false;
@@ -67,4 +69,11 @@ float gsr_read_stress() {
   // Suaviza saída
   g_stress_smooth = (1.0f - ALPHA_STRESS) * g_stress_smooth + ALPHA_STRESS * stress;
   return g_stress_smooth;
+
+}
+
+float gsr_read_microSiemens() {
+  // usa a mesma leitura interna do módulo; retorna <0 se inválido
+  extern float read_microSiemens_once(); // se read_microSiemens_once for 'static', remova 'extern' e chame direto
+  return read_microSiemens_once();
 }

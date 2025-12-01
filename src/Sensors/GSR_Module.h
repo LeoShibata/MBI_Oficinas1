@@ -14,4 +14,6 @@ void gsr_init();
  */
 float gsr_read_stress();
 
+float gsr_read_microSiemens();  // NOVO: leitura instantânea em µS (ou <0 se inválida)
+
 #endif
