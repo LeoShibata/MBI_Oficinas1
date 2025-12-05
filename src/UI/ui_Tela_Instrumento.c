@@ -40,7 +40,7 @@ void ui_event_ContTermometro(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-    if(event_code == LV_EVENT_CLICKED) {
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
         _ui_screen_change(&ui_Tela_Termometro, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Termometro_screen_init);
     }
 }
@@ -49,7 +49,7 @@ void ui_event_ContOximetro(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-    if(event_code == LV_EVENT_CLICKED) {
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
         _ui_screen_change(&ui_Tela_Oximetro, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Oximetro_screen_init);
     }
 }
@@ -58,7 +58,7 @@ void ui_event_ContECG(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-    if(event_code == LV_EVENT_CLICKED) {
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
         _ui_screen_change(&ui_ECG, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_ECG_screen_init);
     }
 }
@@ -67,7 +67,7 @@ void ui_event_ContGSR(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-    if(event_code == LV_EVENT_CLICKED) {
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
         _ui_screen_change(&ui_GSR, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_GSR_screen_init);
     }
 }

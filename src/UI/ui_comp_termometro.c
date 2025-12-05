@@ -42,6 +42,7 @@ lv_obj_t * ui_Termometro_create(lv_obj_t * comp_parent)
 
     lv_obj_t * cui_Img_Icone;
     cui_Img_Icone = lv_img_create(cui_Termometro);
+    lv_img_set_src(cui_Img_Icone, &ui_img_1635948304);
     lv_obj_set_width(cui_Img_Icone, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(cui_Img_Icone, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(cui_Img_Icone, 10);
@@ -54,6 +55,7 @@ lv_obj_t * ui_Termometro_create(lv_obj_t * comp_parent)
 
     lv_obj_t * cui_Img_Seta;
     cui_Img_Seta = lv_img_create(cui_Termometro);
+    lv_img_set_src(cui_Img_Seta, &ui_img_652512494);
     lv_obj_set_width(cui_Img_Seta, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(cui_Img_Seta, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(cui_Img_Seta, -10);

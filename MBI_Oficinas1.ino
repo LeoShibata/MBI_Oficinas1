@@ -3,19 +3,25 @@
 #include "src/RTC_Module.h"
 #include "src/LVGL_Display.h"
 #include "src/SD_Module.h"
-#include "src/Sensors/Temperature_Sensor.h"
-#include "src/Sensors/AD8232_Module.h"
-#include "src/Sensors/GSR_Module.h"
-#include "src/MAX30102_Processes.h"
-
 #include "src/UI/ui.h"
 #include "src/globals.h"
 #include "src/ui_event_bridge.h"           
+
+#include "src/Sensors/Temperature_Sensor.h"
+#include "src/Sensors/AD8232_Module.h"
+#include "src/Sensors/GSR_Module.h"
+#include "src/Sensors/MAX30102_Module.h"
+#include "src/MAX30102_Processes.h"
 
 //---------Variáveis Globais---------
 bool isLoggingActive = false;
 char currentUserId[64] = {0};
 char currentSessionId[32] = {0};
+//-----------------------------------
+
+//---------Para Gráfico - Oxímetro---------
+float visual_ir_dc = 0;
+const float visual_alpha = 0.95;
 //-----------------------------------
 
 float lastValidGSR = 0.f;
@@ -41,11 +47,56 @@ void setup() {
     gsr_init();
 }
 
-void loop() {
 
-// -----------------------------------------------------------------
-    // 1. ATUALIZAÇÃO RÁPIDA (GRÁFICOS) - Executa a cada ~20ms
-    // -----------------------------------------------------------------
+void updateTimeLabelInStatusBar (const char*     time) {
+    lv_obj_t* statusBar[] = {
+        ui_ComBarraStatus1, // tela do termometro
+        ui_ComBarraStatus2, // tela do oximetro
+        ui_ComBarraStatus3, // tela ecg
+        ui_ComBarraStatus4, // tela gsr
+        ui_ComBarraStatus5, // tela de novo registro
+        ui_ComBarraStatus6, // tela dashboard
+        ui_ComStatusBar,    // tela seleção de modo
+        ui_ComStatusBar2,   // tela de instrumentos
+        ui_ComStatusBar3,   // tela modo registro
+        NULL                // Para parar o loop
+    };
+
+    for(int i = 0; statusBar[i] != NULL; i++) {
+        if(statusBar[i] != NULL) {
+            lv_obj_t* labelHora = ui_comp_get_child(statusBar[i], UI_COMP_COMBARRASTATUS_LABELHORA);
+
+            if(labelHora) {
+                lv_label_set_text(labelHora, time.c_str());
+            }
+        }
+    }
+}
+
+
+void loop() {
+    uint32_t red_raw, ir_raw;
+    if (max30102_readRaw(&red_raw, &ir_raw)) {
+
+        ppg_feedSample(red_raw, ir_raw); 
+        // Processamento VISUAL (Para o Gráfico ficar no meio)
+        // 1. Filtro DC Removal: Calcula a média móvel do sinal
+        visual_ir_dc = (visual_alpha * visual_ir_dc) + ((1.0 - visual_alpha) * (float)ir_raw);
+        
+        // 2. Subtrai a média para centrar o sinal em 0
+        float onda_AC = (float)ir_raw - visual_ir_dc;
+
+        // 3. Inverte o sinal (opcional, o pulso costuma ser invertido no IR)
+        // onda_AC = -onda_AC;
+
+        // 4. Envia para o gráfico (Só se a tela estiver ativa para poupar CPU)
+        if (ui_Chart_Oxi && lv_scr_act() == ui_Oximetro) {
+             lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart_Oxi, NULL);
+             // Convertemos para int para ser mais rápido no gráfico
+             lv_chart_set_next_value(ui_Chart_Oxi, ser, (int)onda_AC);
+        }
+    }
+
     if (millis() - lastGraphUpdate > graphInterval) {
         lastGraphUpdate = millis();
 
@@ -92,6 +143,9 @@ void loop() {
             lv_label_set_text(ui_Label10, rtc_buffer);
         }
 
+        char hora_barra_status[6];
+        sprintf(hora_barra_status, "%02d:%02d", now.hour(), now.minute());
+        atualizarHorarioNasBarras(hora_barra_status);
 
         // ---------------- Temperatura ----------------
         // Lê a temperatura uma vez por ciclo
@@ -163,7 +217,6 @@ void loop() {
         if(ui_LabelMedSpO2) {
             lv_label_set_text(ui_LabelMedBPM, SpO2_buffer);
         }
-
         // ------------------------------------------
 
         // Lógica de registro de dados 

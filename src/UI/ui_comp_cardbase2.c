@@ -42,6 +42,7 @@ lv_obj_t * ui_Cardbase2_create(lv_obj_t * comp_parent)
 
     lv_obj_t * cui_Img_Icone3;
     cui_Img_Icone3 = lv_img_create(cui_Cardbase2);
+    lv_img_set_src(cui_Img_Icone3, &ui_img_1635948304);
     lv_obj_set_width(cui_Img_Icone3, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(cui_Img_Icone3, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(cui_Img_Icone3, 20);
@@ -54,6 +55,7 @@ lv_obj_t * ui_Cardbase2_create(lv_obj_t * comp_parent)
 
     lv_obj_t * cui_Img_Seta3;
     cui_Img_Seta3 = lv_img_create(cui_Cardbase2);
+    lv_img_set_src(cui_Img_Seta3, &ui_img_652512494);
     lv_obj_set_width(cui_Img_Seta3, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(cui_Img_Seta3, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(cui_Img_Seta3, -10);
