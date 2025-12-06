@@ -36,7 +36,6 @@ float lastValidGSR = 0.f;
 float visual_ir_dc = 0;                      // Para garantir que a onda não fique uma linha reta no topo do gráfico
 const float visual_alpha = 0.95;             // Suavização para centro do gráfico 
 
-
 // ==========================================
 //           FUNÇÕES AUXILIARES
 // ==========================================
@@ -45,8 +44,8 @@ void updateTimeLabelInStatusBar (const char* timeStr) {
     lv_obj_t* statusBar[] = {
         ui_ComBarraStatus1, ui_ComBarraStatus2, ui_ComBarraStatus3, 
         ui_ComBarraStatus4, ui_ComBarraStatus5, ui_ComBarraStatus6, 
-        ui_ComStatusBar, ui_ComStatusBar2, ui_ComStatusBar3,
-        NULL // Para parar o loop
+        ui_ComStatusBar,    ui_ComStatusBar2,   ui_ComStatusBar3,
+        NULL // Para parar o loop 
     };
 
     for(int i = 0; statusBar[i] != NULL; i++) {
@@ -56,7 +55,6 @@ void updateTimeLabelInStatusBar (const char* timeStr) {
         }
     }
 }
-
 
 // ==========================================
 //               SETUP
@@ -76,9 +74,9 @@ void setup() {
     ad8232_init();
     gsr_init();
     max30102_start();
-    ppg_init();
+    ppg_init(100);
+    setup_ui_logic_bindings(); 
 }
-
 
 // ==========================================
 //           LOOP PRINCIPAL
@@ -96,16 +94,18 @@ void loop() {
         float onda_AC = (float)ir_raw - visual_ir_dc;
 
         // Atualiza o gráfico (Só se a tela estiver ativa)
-        if (ui_Chart_Oxi && lv_scr_act() == ui_Oximetro) {
-             lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart_Oxi, NULL);
-             lv_chart_set_next_value(ui_Chart_Oxi, ser, (int)onda_AC);
+        if (ui_Tela_Oximetro && lv_scr_act() == ui_Tela_Oximetro) {
+            if(ui_ChartPPG) {
+                lv_chart_series_t* ser = lv_chart_get_series_next(ui_ChartPPG, NULL);
+                lv_chart_set_next_value(ui_ChartPPG, ser, (int)onda_AC);
+            }
         }
     }
 
     // ------ Gráfico (Tela ECG) ------
     if (millis() - lastGraphUpdate > graphInterval) {
         lastGraphUpdate = millis();
-        if (ui_Chart2 && lv_scr_act() == ui_ECG) {
+        if (ui_ECG && lv_scr_act() == ui_ECG) {
             float mv = ad8232_read_ecg_mv();
             if (mv > -900) { // -999 indica erro de leitura
                 int val = 50 + (int)(mv * 20.0f);
@@ -118,9 +118,10 @@ void loop() {
                     val = 100;
                 }
                 
-                // Adiciona o ponto à série do gráfico
-                lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
-                lv_chart_set_next_value(ui_Chart2, ser, val);
+                if(ui_Chart2) {
+                    lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
+                    lv_chart_set_next_value(ui_Chart2, ser, val);
+                }
             }
         }
     }
@@ -149,7 +150,7 @@ void loop() {
         // Atualiza hora nas barras de status (HH:MM)
         char hora_barra_status[6];
         sprintf(hora_barra_status, "%02d:%02d", now.hour(), now.minute());
-        atualizarHorarioNasBarras(hora_barra_status);
+        updateTimeLabelInStatusBar(hora_barra_status);
 
         // ---------------- Leitura de Sensores (Valores Numéricos) ----------------
         // --- Temperatura ---
@@ -217,7 +218,7 @@ void loop() {
         }
 
         if(ui_LabelMedSpO2) {
-            lv_label_set_text(ui_LabelMedBPM, SpO2_buffer);
+            lv_label_set_text(ui_LabelMedSpO2, SpO2_buffer);
         }
         if(ui_LabelOxi) {
             lv_label_set_text(ui_LabelOxi, SpO2_buffer);
@@ -225,8 +226,7 @@ void loop() {
 
         // --- Gravação no Cartão SD (Log) ---
         if(isLoggingActive) {
-            Serial.printf("LOG: User = %s, Sess = %s, Temp = %.2f C, SpO2 = %.1f\n",
-                          currentUserId, currentSessionId, currentTemp, currentSpO2);
+            Serial.printf("LOG: User = %s, Sess = %s, Temp = %.2f C, SpO2 = %.1f\n", currentUserId, currentSessionId, currentTemp, currentSpO2);
             
             if (!CSV_appendRow(currentUserId, currentSessionId, "Temperatura", (double)currentTemp, "C")) {
                  Serial.println("Erro: Falha ao gravar Temp no SD.");
