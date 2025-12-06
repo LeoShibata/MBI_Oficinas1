@@ -130,12 +130,12 @@ void loop() {
     lv_timer_handler();
     delay(5);
 
-    // --------- Bloco de Lógica Principal  ------
+    // ------ Bloco de Lógica Principal  ------
     unsigned long nowMs = millis();
     if (nowMs - lastUiUpdate >= uiUpdateInterval){
         lastUiUpdate = nowMs;
         
-        // ---------------- Atualizar Relógio (RTC) ----------------
+        // ------------ Atualizar Relógio (RTC) ------------
         DateTime now = rtc_getTime();
 
         // Atualiza label grande da tela Novo Registro
@@ -152,7 +152,7 @@ void loop() {
         sprintf(hora_barra_status, "%02d:%02d", now.hour(), now.minute());
         updateTimeLabelInStatusBar(hora_barra_status);
 
-        // ---------------- Leitura de Sensores (Valores Numéricos) ----------------
+        // ------------ Leitura de Sensores (Valores Numéricos) ------------
         // --- Temperatura ---
         float currentTemp = read_temperature();
         char temp_buffer[16];

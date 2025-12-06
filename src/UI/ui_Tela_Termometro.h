@@ -14,7 +14,6 @@ extern "C" {
 extern void ui_Tela_Termometro_screen_init(void);
 extern void ui_Tela_Termometro_screen_destroy(void);
 extern lv_obj_t * ui_Tela_Termometro;
-extern void ui_event_Button6(lv_event_t * e);
 extern lv_obj_t * ui_Button6;
 extern lv_obj_t * ui_Label2;
 extern lv_obj_t * ui_ComBarraStatus1;

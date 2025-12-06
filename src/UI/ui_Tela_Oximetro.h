@@ -14,7 +14,6 @@ extern "C" {
 extern void ui_Tela_Oximetro_screen_init(void);
 extern void ui_Tela_Oximetro_screen_destroy(void);
 extern lv_obj_t * ui_Tela_Oximetro;
-extern void ui_event_Button8(lv_event_t * e);
 extern lv_obj_t * ui_Button8;
 extern lv_obj_t * ui_Label12;
 extern lv_obj_t * ui_ComBarraStatus2;

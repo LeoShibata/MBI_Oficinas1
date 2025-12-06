@@ -46,15 +46,6 @@ void ui_event_Button5(lv_event_t * e)
     }
 }
 
-void ui_event_BTSalvar(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Dashboard, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Dashboard_screen_init);
-    }
-}
-
 void ui_event_Keyboard4(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -148,7 +139,6 @@ void ui_Novo_Registro_screen_init(void)
 
     lv_obj_add_event_cb(ui_TextArea2, ui_event_TextArea2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button5, ui_event_Button5, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_BTSalvar, ui_event_BTSalvar, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Keyboard4, ui_event_Keyboard4, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Novo_Registro, ui_event_Novo_Registro, LV_EVENT_ALL, NULL);
     uic_BTSalvar = ui_BTSalvar;

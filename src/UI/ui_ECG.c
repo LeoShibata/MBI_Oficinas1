@@ -14,14 +14,6 @@ lv_obj_t * ui_Label22 = NULL;
 lv_obj_t * ui_LabelMedBPM2 = NULL;
 lv_obj_t * ui_Image6 = NULL;
 // event funtions
-void ui_event_Button7(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Tela_Instrumento, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Instrumento_screen_init);
-    }
-}
 
 // build funtions
 
@@ -108,8 +100,6 @@ void ui_ECG_screen_init(void)
     lv_obj_clear_flag(ui_Image6, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_img_recolor(ui_Image6, lv_color_hex(0x00FF36), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_img_recolor_opa(ui_Image6, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    lv_obj_add_event_cb(ui_Button7, ui_event_Button7, LV_EVENT_ALL, NULL);
 
 }
 

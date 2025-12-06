@@ -29,7 +29,6 @@ extern void ui_event_BTbpm(lv_event_t * e);
 extern lv_obj_t * ui_BTbpm;
 extern lv_obj_t * ui_LabelBPM;
 extern lv_obj_t * ui_Label24;
-extern void ui_event_BTSalvar2(lv_event_t * e);
 extern lv_obj_t * ui_BTSalvar2;
 extern lv_obj_t * ui_LabelSalvar2;
 extern void ui_event_BTgsr(lv_event_t * e);

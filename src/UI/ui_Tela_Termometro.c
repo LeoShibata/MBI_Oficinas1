@@ -16,14 +16,6 @@ lv_obj_t * ui_Image5 = NULL;
 lv_obj_t * ui_Label19 = NULL;
 lv_obj_t * ui_Label20 = NULL;
 // event funtions
-void ui_event_Button6(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Tela_Instrumento, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Instrumento_screen_init);
-    }
-}
 
 // build funtions
 
@@ -111,7 +103,6 @@ void ui_Tela_Termometro_screen_init(void)
     lv_obj_set_align(ui_Label20, LV_ALIGN_BOTTOM_MID);
     lv_label_set_text(ui_Label20, "°C");
 
-    lv_obj_add_event_cb(ui_Button6, ui_event_Button6, LV_EVENT_ALL, NULL);
     uic_Termometro = ui_Tela_Termometro;
 
 }

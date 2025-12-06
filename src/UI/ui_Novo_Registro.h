@@ -22,7 +22,6 @@ extern void ui_event_Button5(lv_event_t * e);
 extern lv_obj_t * ui_Button5;
 extern lv_obj_t * ui_Label14;
 extern lv_obj_t * ui_ComBarraStatus5;
-extern void ui_event_BTSalvar(lv_event_t * e);
 extern lv_obj_t * ui_BTSalvar;
 extern lv_obj_t * ui_LabelSalvar;
 extern lv_obj_t * ui_Image1;

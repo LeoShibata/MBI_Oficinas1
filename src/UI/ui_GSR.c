@@ -12,14 +12,6 @@ lv_obj_t * ui_ComBarraStatus4 = NULL;
 lv_obj_t * ui_Label27 = NULL;
 lv_obj_t * ui_Label28 = NULL;
 // event funtions
-void ui_event_Button9(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Tela_Instrumento, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Instrumento_screen_init);
-    }
-}
 
 // build funtions
 
@@ -65,8 +57,6 @@ void ui_GSR_screen_init(void)
     lv_obj_set_y(ui_Label28, 40);
     lv_obj_set_align(ui_Label28, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label28, "Normal");
-
-    lv_obj_add_event_cb(ui_Button9, ui_event_Button9, LV_EVENT_ALL, NULL);
 
 }
 

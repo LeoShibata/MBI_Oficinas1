@@ -21,14 +21,6 @@ lv_obj_t * ui_Label18 = NULL;
 lv_obj_t * ui_Image4 = NULL;
 lv_obj_t * ui_ChartPPG = NULL;
 // event funtions
-void ui_event_Button8(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Tela_Instrumento, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Instrumento_screen_init);
-    }
-}
 
 // build funtions
 
@@ -147,7 +139,6 @@ void ui_Tela_Oximetro_screen_init(void)
     lv_obj_set_style_text_color(ui_ChartPPG, lv_color_hex(0x808080), LV_PART_TICKS | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_ChartPPG, 0, LV_PART_TICKS | LV_STATE_DEFAULT);
 
-    lv_obj_add_event_cb(ui_Button8, ui_event_Button8, LV_EVENT_ALL, NULL);
     uic_ContMedOximetro = ui_ContMedOximetro;
     uic_LabelMedSpO2 = ui_LabelMedSpO2;
     uic_LabelMedTermometro = ui_LabelMedBPM;

@@ -61,6 +61,7 @@ void StopRecordingSession(lv_event_t * e) {
 }
 
 void setup_ui_logic_bindings() {
+    // --- Botões de Controle de Sessão ---
     if(ui_BTSalvar) {
         lv_obj_add_event_cb(ui_BTSalvar, StartRecordingSession, LV_EVENT_CLICKED, NULL);
     }
@@ -69,7 +70,24 @@ void setup_ui_logic_bindings() {
         lv_obj_add_event_cb(ui_BTSalvar2, StopRecordingSession, LV_EVENT_CLICKED, NULL);
     }
 
+    // --- Botões de "Voltar" dos Instrumentos ---
+    // Termômetro
     if(ui_Button6) {
         lv_obj_add_event_cb(ui_Button6, returnButtonLogic, LV_EVENT_CLICKED, NULL);
+    }
+    
+    // ECG
+    if(ui_Button7) {
+        lv_obj_add_event_cb(ui_Button7, returnButtonLogic, LV_EVENT_CLICKED, NULL);
+    }
+
+    // Oxímetro
+    if(ui_Button8) {
+        lv_obj_add_event_cb(ui_Button8, returnButtonLogic, LV_EVENT_CLICKED, NULL);
+    }
+
+    // GSR
+    if(ui_Button9) {
+        lv_obj_add_event_cb(ui_Button9, returnButtonLogic, LV_EVENT_CLICKED, NULL);
     }
 }
