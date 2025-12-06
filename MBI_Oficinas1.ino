@@ -13,24 +13,54 @@
 #include "src/Sensors/MAX30102_Module.h"
 #include "src/MAX30102_Processes.h"
 
-//---------Variáveis Globais---------
+// ==========================================
+//           VARIÁVEIS GLOBAIS
+// ==========================================
+
+// --- Controle de Sessão e Log ---
 bool isLoggingActive = false;
 char currentUserId[64] = {0};
 char currentSessionId[32] = {0};
-//-----------------------------------
 
-//---------Para Gráfico - Oxímetro---------
-float visual_ir_dc = 0;
-const float visual_alpha = 0.95;
-//-----------------------------------
-
-float lastValidGSR = 0.f;
-
-unsigned long lastUpdate = 0;
-const unsigned long updateInterval = 1000;  // 1s
+// --- Controle de Tempo (Timers) ---
+unsigned long lastUiUpdate = 0;
+const unsigned long uiUpdateInterval = 1000; // Atualiza textos a cada 1s
 
 unsigned long lastGraphUpdate = 0;
-const unsigned long graphInterval = 20; 
+const unsigned long graphInterval = 20;      // Atualiza gráficos a cada 20ms
+
+// --- Variáveis de Estado dos Sensores ---
+float lastValidGSR = 0.f;
+
+// --- Filtro Visual do Oxímetro (DC Removal) ---
+float visual_ir_dc = 0;                      // Para garantir que a onda não fique uma linha reta no topo do gráfico
+const float visual_alpha = 0.95;             // Suavização para centro do gráfico 
+
+
+// ==========================================
+//           FUNÇÕES AUXILIARES
+// ==========================================
+
+void updateTimeLabelInStatusBar (const char* timeStr) {
+    lv_obj_t* statusBar[] = {
+        ui_ComBarraStatus1, ui_ComBarraStatus2, ui_ComBarraStatus3, 
+        ui_ComBarraStatus4, ui_ComBarraStatus5, ui_ComBarraStatus6, 
+        ui_ComStatusBar, ui_ComStatusBar2, ui_ComStatusBar3,
+        NULL // Para parar o loop
+    };
+
+    for(int i = 0; statusBar[i] != NULL; i++) {
+        lv_obj_t* labelHora = ui_comp_get_child(statusBar[i], UI_COMP_COMBARRASTATUS_LABELHORA);
+        if(labelHora) {
+            lv_label_set_text(labelHora, timeStr);
+        }
+    }
+}
+
+
+// ==========================================
+//               SETUP
+// ==========================================
 
 void setup() {
     Serial.begin(115200);
@@ -45,77 +75,49 @@ void setup() {
     init_temperature_sensor();
     ad8232_init();
     gsr_init();
+    max30102_start();
+    ppg_init();
 }
 
 
-void updateTimeLabelInStatusBar (const char*     time) {
-    lv_obj_t* statusBar[] = {
-        ui_ComBarraStatus1, // tela do termometro
-        ui_ComBarraStatus2, // tela do oximetro
-        ui_ComBarraStatus3, // tela ecg
-        ui_ComBarraStatus4, // tela gsr
-        ui_ComBarraStatus5, // tela de novo registro
-        ui_ComBarraStatus6, // tela dashboard
-        ui_ComStatusBar,    // tela seleção de modo
-        ui_ComStatusBar2,   // tela de instrumentos
-        ui_ComStatusBar3,   // tela modo registro
-        NULL                // Para parar o loop
-    };
-
-    for(int i = 0; statusBar[i] != NULL; i++) {
-        if(statusBar[i] != NULL) {
-            lv_obj_t* labelHora = ui_comp_get_child(statusBar[i], UI_COMP_COMBARRASTATUS_LABELHORA);
-
-            if(labelHora) {
-                lv_label_set_text(labelHora, time.c_str());
-            }
-        }
-    }
-}
-
+// ==========================================
+//           LOOP PRINCIPAL
+// ==========================================
 
 void loop() {
+    // ------ Gráfico (Tela Oxímetro) ------
     uint32_t red_raw, ir_raw;
     if (max30102_readRaw(&red_raw, &ir_raw)) {
 
         ppg_feedSample(red_raw, ir_raw); 
+
         // Processamento VISUAL (Para o Gráfico ficar no meio)
-        // 1. Filtro DC Removal: Calcula a média móvel do sinal
         visual_ir_dc = (visual_alpha * visual_ir_dc) + ((1.0 - visual_alpha) * (float)ir_raw);
-        
-        // 2. Subtrai a média para centrar o sinal em 0
         float onda_AC = (float)ir_raw - visual_ir_dc;
 
-        // 3. Inverte o sinal (opcional, o pulso costuma ser invertido no IR)
-        // onda_AC = -onda_AC;
-
-        // 4. Envia para o gráfico (Só se a tela estiver ativa para poupar CPU)
+        // Atualiza o gráfico (Só se a tela estiver ativa)
         if (ui_Chart_Oxi && lv_scr_act() == ui_Oximetro) {
              lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart_Oxi, NULL);
-             // Convertemos para int para ser mais rápido no gráfico
              lv_chart_set_next_value(ui_Chart_Oxi, ser, (int)onda_AC);
         }
     }
 
+    // ------ Gráfico (Tela ECG) ------
     if (millis() - lastGraphUpdate > graphInterval) {
         lastGraphUpdate = millis();
-
-        // --- Gráfico de ECG (Tela: ui_ECG, Chart: ui_Chart2) ---
-        // Verifica se a tela de ECG está ativa e se o gráfico existe
         if (ui_Chart2 && lv_scr_act() == ui_ECG) {
             float mv = ad8232_read_ecg_mv();
-            
-            // Se leitura válida (ad8232 retorna -999 se erro)
-            if (mv > -900) {
-                // Escalonamento simples para caber no gráfico (0-100)
-                // Assumindo que o sinal varia aprox +/- 2.0mV. 
-                // Centro em 50. Ganho de 20x.
+            if (mv > -900) { // -999 indica erro de leitura
                 int val = 50 + (int)(mv * 20.0f);
-                
-                // Limita entre 0 e 100 para não estourar o gráfico
-                if (val < 0) val = 0;
-                if (val > 100) val = 100;
 
+                // Limita entre 0 e 100 para não estourar o gráfico
+                if (val < 0) {
+                    val = 0;
+                }
+                if (val > 100) {
+                    val = 100;
+                }
+                
                 // Adiciona o ponto à série do gráfico
                 lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
                 lv_chart_set_next_value(ui_Chart2, ser, val);
@@ -123,117 +125,120 @@ void loop() {
         }
     }
 
-    lv_timer_handler();  // Processa tarefas LVGL (eventos, animações)
+    // ------ Tarefas da UI (LVGL) ------
+    lv_timer_handler();
     delay(5);
 
-    // Bloco de Lógica Principal (executa a cada 'updateInterval')
+    // --------- Bloco de Lógica Principal  ------
     unsigned long nowMs = millis();
-    if (nowMs - lastUpdate >= updateInterval){
-        lastUpdate = nowMs;
+    if (nowMs - lastUiUpdate >= uiUpdateInterval){
+        lastUiUpdate = nowMs;
         
-        // Atualiza Relógio (Tela Novo_Registro)
+        // ---------------- Atualizar Relógio (RTC) ----------------
         DateTime now = rtc_getTime();
-        char rtc_buffer[32];
-        sprintf(rtc_buffer, "%02d/%02d/%04d %02d:%02d:%02d",
-            now.day(), now.month(), now.year(),
-            now.hour(), now.minute(), now.second());
-        
-        // Atualiza label da UI (se tela estiver carregada)
+
+        // Atualiza label grande da tela Novo Registro
         if(ui_Label10) {
+            char rtc_buffer[32];
+            sprintf(rtc_buffer, "%02d/%02d/%04d %02d:%02d:%02d",
+                now.day(), now.month(), now.year(),
+                now.hour(), now.minute(), now.second());
             lv_label_set_text(ui_Label10, rtc_buffer);
         }
 
+        // Atualiza hora nas barras de status (HH:MM)
         char hora_barra_status[6];
         sprintf(hora_barra_status, "%02d:%02d", now.hour(), now.minute());
         atualizarHorarioNasBarras(hora_barra_status);
 
-        // ---------------- Temperatura ----------------
-        // Lê a temperatura uma vez por ciclo
+        // ---------------- Leitura de Sensores (Valores Numéricos) ----------------
+        // --- Temperatura ---
         float currentTemp = read_temperature();
-
-        // Formata para a tela do Termômetro
         char temp_buffer[16];
         snprintf(temp_buffer, sizeof(temp_buffer), "%.1f", currentTemp);
 
-        // Atualiza label da UI (se tela estiver carregada)
-        if(ui_Label19) {
+        if(ui_Label19) { // Tela Termometro
             lv_label_set_text(ui_Label19, temp_buffer);
         }
-        
+        if(ui_LabelTemp) { // Tela Dashboard
+            lv_label_set_text(ui_LabelTemp, temp_buffer);
+        }
 
-        // ---------------- GSR ----------------
-        // Lê GSR uma vez por ciclo
+        // --- GSR (Estresse) ---
         float currentStress = gsr_read_stress();
 
         if(currentStress > -900.f) {
             lastValidGSR = currentStress;
         }
 
-        // Formata para a tela do Termômetro
         char stress_buffer[16];
         snprintf(stress_buffer, sizeof(stress_buffer), "%.1f", lastValidGSR);
 
-        // Atualiza label da UI (se tela estiver carregada)
-        if(ui_Label27) {
+        if(ui_Label27) { // Tela GSR
             lv_label_set_text(ui_Label27, stress_buffer);
         }
+        if(ui_LabelGSR) { // Tela Dashboard
+            lv_label_set_text(ui_LabelGSR, stress_buffer);
+        }
 
-
-        // ---------------- ECG ----------------
-        // Lê ECG uma vez por ciclo
+        // --- ECG --- /////////////// CORRIGIR "BPM"
         float currentBPM = ad8232_read_ecg_mv();
-
-        // Formata para a tela do Termômetro
         char BPM_buffer[16];
         snprintf(BPM_buffer, sizeof(BPM_buffer), "%.1f", currentBPM);
 
-        // Atualiza label da UI (se tela estiver carregada)
         if(ui_Label27) {
             lv_label_set_text(ui_LabelMedBPM2, BPM_buffer);
         }
 
-
-        // ---------------- OXIMETRO ----------------
-        // Lê cpm do oximetro uma vez por ciclo
+        // --- Oxímetro (SpO2 e BPM) ---
+        ppg_tick_1s();
+        
         float currentOxiBPM = ppg_getBPM();
-
-        // Formata para a tela do Termômetro
-        char OxiBPM_buffer[16];
-        snprintf(OxiBPM_buffer, sizeof(OxiBPM_buffer), "%.1f", currentOxiBPM);
-
-        // Atualiza label da UI (se tela estiver carregada)
-        if(ui_LabelMedBPM) {
-            lv_label_set_text(ui_LabelMedBPM, OxiBPM_buffer);
+        char oxi_bpm_buffer[16];
+        if (ppg_hasBPM()) {
+            snprintf(oxi_bpm_buffer, sizeof(oxi_bpm_buffer), "%.0f", currentOxiBPM);
+        } else {
+            strcpy(oxi_bpm_buffer, "--");
+        }
+        
+        if(ui_LabelMedBPM) { // Tela Oxímetro
+            lv_label_set_text(ui_LabelMedBPM, oxi_bpm_buffer);
+        }
+        if(ui_LabelBPM) { // Tela Dashboard
+            lv_label_set_text(ui_LabelBPM, oxi_bpm_buffer);
         }
 
-        // Lê SpO2 uma vez por ciclo
         float currentSpO2 = ppg_getSpO2();
-
-        // Formata para a tela do Termômetro
         char SpO2_buffer[16];
-        snprintf(SpO2_buffer, sizeof(SpO2_buffer), "%.1f", currentSpO2);
+        if (ppg_hasSpO2()) {
+            snprintf(SpO2_buffer, sizeof(SpO2_buffer), "%.0f", currentSpO2);
+        } else {
+            strcpy(SpO2_buffer, "--");
+        }
 
-        // Atualiza label da UI (se tela estiver carregada)
         if(ui_LabelMedSpO2) {
             lv_label_set_text(ui_LabelMedBPM, SpO2_buffer);
         }
-        // ------------------------------------------
+        if(ui_LabelOxi) {
+            lv_label_set_text(ui_LabelOxi, SpO2_buffer);
+        }
 
-        // Lógica de registro de dados 
+        // --- Gravação no Cartão SD (Log) ---
         if(isLoggingActive) {
-            Serial.printf("LOG: User=%, Sess=%s, Temp=%2.f C\n",
-                          currentUserId, currentSessionId, currentTemp);
+            Serial.printf("LOG: User = %s, Sess = %s, Temp = %.2f C, SpO2 = %.1f\n",
+                          currentUserId, currentSessionId, currentTemp, currentSpO2);
             
-            // Salva a linha no arquivo CSV usando o valor já lido.
-            bool success = CSV_appendRow(currentUserId,
-                                         currentSessionId,
-                                         "Temperatura",
-                                         (double)currentTemp,
-                                         "C");
-            
-            if(!success) {
-                Serial.println("Erro: Falha ao gravar no Sd Card.");
+            if (!CSV_appendRow(currentUserId, currentSessionId, "Temperatura", (double)currentTemp, "C")) {
+                 Serial.println("Erro: Falha ao gravar Temp no SD.");
             }
+            
+            if(ppg_hasSpO2()) {
+                 if (!CSV_appendRow(currentUserId, currentSessionId, "SpO2", (double)ppg_getSpO2(), "%")) {
+                     Serial.println("Erro: Falha ao gravar SpO2.");
+                 }
+            }
+            
+            CSV_appendRow(currentUserId, currentSessionId, "GSR", (double)lastValidGSR, "uS");
         }
     }
 }
