@@ -78,7 +78,6 @@ void ui_Novo_Registro_screen_init(void)
     lv_obj_set_y(ui_TextArea2, -45);
     lv_obj_set_align(ui_TextArea2, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextArea2, "Nome do Paciente");
-    lv_obj_set_style_border_width(ui_TextArea2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Label10 = lv_label_create(ui_Novo_Registro);
     lv_obj_set_width(ui_Label10, LV_SIZE_CONTENT);   /// 1

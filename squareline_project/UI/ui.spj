@@ -8,7 +8,7 @@
         "deepid": 1202710106,
         "isPage": true,
         "editor_posx": 400,
-        "editor_posy": -920,
+        "editor_posy": -1020,
         "dont_export": false,
         "locked": false,
         "properties": [
@@ -3442,8 +3442,8 @@
           }
         ],
         "isPage": true,
-        "editor_posx": 840,
-        "editor_posy": -920,
+        "editor_posx": 820,
+        "editor_posy": -1020,
         "dont_export": false,
         "locked": false,
         "properties": [
@@ -6523,8 +6523,8 @@
               }
             ],
             "isPage": true,
-            "editor_posx": 1324,
-            "editor_posy": -1280,
+            "editor_posx": 1300,
+            "editor_posy": -1420,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -10256,8 +10256,8 @@
               }
             ],
             "isPage": true,
-            "editor_posx": 1704,
-            "editor_posy": -1280,
+            "editor_posx": 1744,
+            "editor_posy": -1420,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -12968,6 +12968,55 @@
                         "strtype": "_event/condition_P",
                         "strval": "",
                         "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000880,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1000881,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000882,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000883,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000884,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID37429532-150986S6384324",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1000885,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "FADE_ON",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1000886,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 200,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1000887,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
                       }
                     ],
                     "InheritedType": 4
@@ -13594,6 +13643,82 @@
                     "strtype": "BUTTON/Style_main",
                     "strval": "lv.PART.MAIN, Rectangle, Pad, Text, Transform",
                     "InheritedType": 11
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1000888,
+                    "strtype": "_event/EventHandler",
+                    "strval": "CLICKED",
+                    "childs": [
+                      {
+                        "nid": 1000889,
+                        "strtype": "_event/name",
+                        "strval": "Event9",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000890,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000891,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000892,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1000893,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000894,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000895,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000896,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID27907608-150992S424324",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1000897,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "FADE_ON",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1000898,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 200,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1000899,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
                   }
                 ],
                 "saved_objtypeKey": "BUTTON"
@@ -14059,6 +14184,82 @@
                     "strtype": "BUTTON/Style_main",
                     "strval": "lv.PART.MAIN, Rectangle, Pad, Text, Transform",
                     "InheritedType": 11
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1000900,
+                    "strtype": "_event/EventHandler",
+                    "strval": "CLICKED",
+                    "childs": [
+                      {
+                        "nid": 1000901,
+                        "strtype": "_event/name",
+                        "strval": "Event18",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000902,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000903,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000904,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1000905,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000906,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000907,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000908,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID16122748-150998S343734324",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1000909,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "FADE_ON",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1000910,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 200,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1000911,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
                   }
                 ],
                 "saved_objtypeKey": "BUTTON"
@@ -14891,6 +15092,82 @@
                     "strtype": "BUTTON/Style_main",
                     "strval": "lv.PART.MAIN, Rectangle, Pad, Text, Transform",
                     "InheritedType": 11
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1000912,
+                    "strtype": "_event/EventHandler",
+                    "strval": "CLICKED",
+                    "childs": [
+                      {
+                        "nid": 1000913,
+                        "strtype": "_event/name",
+                        "strval": "Event19",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000914,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000915,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1000916,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1000917,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000918,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000919,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000920,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID62401576-150994S3714324",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1000921,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "FADE_ON",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1000922,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 200,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1000923,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
                   }
                 ],
                 "saved_objtypeKey": "BUTTON",
@@ -14898,8 +15175,8 @@
               }
             ],
             "isPage": true,
-            "editor_posx": 2104,
-            "editor_posy": -1280,
+            "editor_posx": 2144,
+            "editor_posy": -1420,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -21332,7 +21609,7 @@
             ],
             "isPage": true,
             "editor_posx": 1284,
-            "editor_posy": -600,
+            "editor_posy": -700,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -24790,7 +25067,7 @@
             ],
             "isPage": true,
             "editor_posx": 1744,
-            "editor_posy": -400,
+            "editor_posy": -500,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -28689,7 +28966,7 @@
             ],
             "isPage": true,
             "editor_posx": 2144,
-            "editor_posy": -400,
+            "editor_posy": -500,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -31512,7 +31789,7 @@
             ],
             "isPage": true,
             "editor_posx": 2144,
-            "editor_posy": -740,
+            "editor_posy": -840,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -34906,7 +35183,7 @@
             ],
             "isPage": true,
             "editor_posx": 1744,
-            "editor_posy": -740,
+            "editor_posy": -840,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -35442,7 +35719,7 @@
     "theme_color1": 5,
     "theme_color2": 0,
     "custom_variable_prefix": "uic",
-    "backup_cnt": 124,
+    "backup_cnt": 135,
     "autosave_cnt": 0,
     "group_color_cnt": 9,
     "lvgl_version": "8.3.11",
@@ -35452,7 +35729,7 @@
     "naming": "Name",
     "naming_force_lowercase": false,
     "naming_add_subcomponent": false,
-    "nidcnt": 1000880,
+    "nidcnt": 1000924,
     "BitDepth": 16,
     "Name": "ui"
   }

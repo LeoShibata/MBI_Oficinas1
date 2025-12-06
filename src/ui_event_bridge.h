@@ -3,7 +3,7 @@
 
 #include "lvgl.h"
 
-// Funções chamadas pelos botões da interface
+void returnButtonLogic(lv_event_t * e);
 void StartRecordingSession(lv_event_t * e);
 void StopRecordingSession(lv_event_t * e);
 

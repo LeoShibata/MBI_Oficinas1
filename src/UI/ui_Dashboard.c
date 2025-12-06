@@ -41,12 +41,48 @@ void ui_event_Dashboard(lv_event_t * e)
     }
 }
 
+void ui_event_BTtemp(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Tela_Termometro, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Termometro_screen_init);
+    }
+}
+
+void ui_event_BTOxi(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Tela_Oximetro, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_Tela_Oximetro_screen_init);
+    }
+}
+
+void ui_event_BTbpm(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_ECG, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_ECG_screen_init);
+    }
+}
+
 void ui_event_BTSalvar2(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_screen_change(&ui_Novo_Registro, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Novo_Registro_screen_init);
+    }
+}
+
+void ui_event_BTgsr(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_GSR, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_GSR_screen_init);
     }
 }
 
@@ -192,7 +228,11 @@ void ui_Dashboard_screen_init(void)
     lv_obj_set_align(ui_Label23, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label23, "GSR");
 
+    lv_obj_add_event_cb(ui_BTtemp, ui_event_BTtemp, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_BTOxi, ui_event_BTOxi, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_BTbpm, ui_event_BTbpm, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_BTSalvar2, ui_event_BTSalvar2, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_BTgsr, ui_event_BTgsr, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Dashboard, ui_event_Dashboard, LV_EVENT_ALL, NULL);
     uic_BTtemp = ui_BTtemp;
     uic_LabelTemp = ui_LabelTemp;
