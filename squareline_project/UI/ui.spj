@@ -6523,8 +6523,8 @@
               }
             ],
             "isPage": true,
-            "editor_posx": 1284,
-            "editor_posy": -1220,
+            "editor_posx": 1324,
+            "editor_posy": -1280,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -10256,8 +10256,8 @@
               }
             ],
             "isPage": true,
-            "editor_posx": 1664,
-            "editor_posy": -1220,
+            "editor_posx": 1704,
+            "editor_posy": -1280,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -14898,8 +14898,8 @@
               }
             ],
             "isPage": true,
-            "editor_posx": 2064,
-            "editor_posy": -1220,
+            "editor_posx": 2104,
+            "editor_posy": -1280,
             "dont_export": false,
             "locked": false,
             "properties": [
@@ -35442,7 +35442,7 @@
     "theme_color1": 5,
     "theme_color2": 0,
     "custom_variable_prefix": "uic",
-    "backup_cnt": 117,
+    "backup_cnt": 124,
     "autosave_cnt": 0,
     "group_color_cnt": 9,
     "lvgl_version": "8.3.11",
