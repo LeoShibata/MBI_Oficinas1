@@ -165,6 +165,20 @@ void loop() {
             lv_label_set_text(ui_LabelTemp, temp_buffer);
         }
 
+        if(ui_Label21) {
+            if(currentTemp <= 35.0) {
+                lv_label_set_text(ui_Label21, "Hipotermia");
+            } else if(currentTemp > 35.0 && currentTemp <= 37.5) {
+                lv_label_set_text(ui_Label21, "Normal");
+            } else if(currentTemp > 37.5 && currentTemp <= 39.5) {
+                lv_label_set_text(ui_Label21, "Febre");
+            } else if(currentTemp > 39.5 && currentTemp < 41) {
+                lv_label_set_text(ui_Label21, "Febre alta");
+            } else {
+                lv_label_set_text(ui_Label21, "Hipertermia");
+            }
+        }
+
         // --- GSR (Estresse) ---
         float currentStress = gsr_read_stress();
 
