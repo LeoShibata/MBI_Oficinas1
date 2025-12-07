@@ -40,7 +40,7 @@ const float visual_alpha = 0.95;             // Suavização para centro do grá
 //           FUNÇÕES AUXILIARES
 // ==========================================
 
-void updateTimeLabelInStatusBar (const char* timeStr) {
+void updateTimeLabelInStatusBar(const char* timeStr) {
     lv_obj_t* statusBar[] = {
         ui_ComBarraStatus1, ui_ComBarraStatus2, ui_ComBarraStatus3, 
         ui_ComBarraStatus4, ui_ComBarraStatus5, ui_ComBarraStatus6, 
@@ -52,6 +52,26 @@ void updateTimeLabelInStatusBar (const char* timeStr) {
         lv_obj_t* labelHora = ui_comp_get_child(statusBar[i], UI_COMP_COMBARRASTATUS_LABELHORA);
         if(labelHora) {
             lv_label_set_text(labelHora, timeStr);
+        }
+    }
+}
+
+void updateRecDotState() {
+    lv_obj_t* statusBar[] = {
+        ui_ComBarraStatus1, ui_ComBarraStatus2, ui_ComBarraStatus3, 
+        ui_ComBarraStatus4, ui_ComBarraStatus5, ui_ComBarraStatus6, 
+        ui_ComStatusBar,    ui_ComStatusBar2,   ui_ComStatusBar3,
+        NULL // Para parar o loop 
+    };
+
+    for(int i = 0; statusBar[i] != NULL; i++) {
+        lv_obj_t* recDot = ui_comp_get_child(statusBar[i], UI_COMP_COMBARRASTATUS_REC_DOT);
+        if(recDot) {
+            if(isLoggingActive) {
+                lv_obj_clear_flag(recDot, LV_OBJ_FLAG_HIDDEN);
+            } else {
+                lv_obj_add_flag(recDot, LV_OBJ_FLAG_HIDDEN);
+            }
         }
     }
 }
@@ -152,11 +172,19 @@ void loop() {
         sprintf(hora_barra_status, "%02d:%02d", now.hour(), now.minute());
         updateTimeLabelInStatusBar(hora_barra_status);
 
+        // ------------ Atualizar REC DOT ------------
+        updateRecDotState();
+        
         // ------------ Leitura de Sensores (Valores Numéricos) ------------
         // --- Temperatura ---
         float currentTemp = read_temperature();
         char temp_buffer[16];
-        snprintf(temp_buffer, sizeof(temp_buffer), "%.1f", currentTemp);
+
+        if(currentTemp > -100.f) {
+            snprintf(temp_buffer, sizeof(temp_buffer), "%.1f", currentTemp);
+        } else {
+            strcpy(temp_buffer, "--");
+        }
 
         if(ui_Label19) { // Tela Termometro
             lv_label_set_text(ui_Label19, temp_buffer);
@@ -181,13 +209,14 @@ void loop() {
 
         // --- GSR (Estresse) ---
         float currentStress = gsr_read_stress();
+        char stress_buffer[16];
 
         if(currentStress > -900.f) {
             lastValidGSR = currentStress;
+            snprintf(stress_buffer, sizeof(stress_buffer), "%.1f", lastValidGSR);
+        } else {
+            strcpy(stress_buffer, "--");
         }
-
-        char stress_buffer[16];
-        snprintf(stress_buffer, sizeof(stress_buffer), "%.1f", lastValidGSR);
 
         if(ui_Label27) { // Tela GSR
             lv_label_set_text(ui_Label27, stress_buffer);
@@ -199,9 +228,14 @@ void loop() {
         // --- ECG --- /////////////// CORRIGIR "BPM"
         float currentBPM = ad8232_read_ecg_mv();
         char BPM_buffer[16];
-        snprintf(BPM_buffer, sizeof(BPM_buffer), "%.1f", currentBPM);
+        
+        if(currentBPM > -900.f) {
+            snprintf(BPM_buffer, sizeof(BPM_buffer), "%.1f", currentBPM);
+        } else {
+            strcpy(BPM_buffer, "--");
+        }
 
-        if(ui_Label27) {
+        if(ui_LabelMedBPM2) {
             lv_label_set_text(ui_LabelMedBPM2, BPM_buffer);
         }
 
@@ -210,6 +244,7 @@ void loop() {
         
         float currentOxiBPM = ppg_getBPM();
         char oxi_bpm_buffer[16];
+
         if (ppg_hasBPM()) {
             snprintf(oxi_bpm_buffer, sizeof(oxi_bpm_buffer), "%.0f", currentOxiBPM);
         } else {
@@ -225,6 +260,7 @@ void loop() {
 
         float currentSpO2 = ppg_getSpO2();
         char SpO2_buffer[16];
+        
         if (ppg_hasSpO2()) {
             snprintf(SpO2_buffer, sizeof(SpO2_buffer), "%.0f", currentSpO2);
         } else {
