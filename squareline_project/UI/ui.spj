@@ -18455,7 +18455,7 @@
                           {
                             "nid": 1020,
                             "strtype": "IMAGE/Asset",
-                            "strval": "assets/icons8-pulsação-40.png",
+                            "strval": "assets/gsr.png",
                             "InheritedType": 5
                           },
                           {
@@ -18719,8 +18719,8 @@
                         "flags": 17,
                         "strtype": "OBJECT/Position",
                         "intarray": [
-                          0,
-                          0
+                          -451,
+                          -58
                         ],
                         "InheritedType": 7
                       },
@@ -21870,7 +21870,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "BUTTON"
+                "saved_objtypeKey": "BUTTON",
+                "tree_closed": true
               },
               {
                 "guid": "GUID77572482-420492S9984324",
@@ -28304,7 +28305,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      110,
+                      130,
                       180
                     ],
                     "InheritedType": 7
@@ -28377,8 +28378,8 @@
                     "nid": 1040,
                     "strtype": "CHART/Division_lines",
                     "intarray": [
-                      3,
-                      5
+                      10,
+                      10
                     ],
                     "InheritedType": 7
                   },
@@ -28435,8 +28436,8 @@
                     "nid": 1120,
                     "strtype": "CHART/Primary_Y_range",
                     "intarray": [
-                      -500,
-                      500
+                      -200,
+                      200
                     ],
                     "InheritedType": 7
                   },
@@ -33882,7 +33883,7 @@
                     "strtype": "OBJECT/Position",
                     "intarray": [
                       0,
-                      -20
+                      -25
                     ],
                     "InheritedType": 7
                   },
@@ -33891,8 +33892,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      220,
-                      120
+                      280,
+                      130
                     ],
                     "InheritedType": 7
                   },
@@ -33966,7 +33967,7 @@
                     "strtype": "CHART/Division_lines",
                     "intarray": [
                       10,
-                      8
+                      20
                     ],
                     "InheritedType": 7
                   },
@@ -34061,6 +34062,7 @@
                   },
                   {
                     "nid": 1170,
+                    "flags": 1048576,
                     "strtype": "CHART/Secondary_Y_Axis",
                     "InheritedType": 1
                   },
@@ -34111,7 +34113,7 @@
                   {
                     "nid": 1240,
                     "strtype": "CHART/ChartData",
-                    "strval": "[{\"Axis\":0,\"Color\":[0,255,49,255],\"Series\":[0,10,20,40,80,80,40,20,10,0]}]",
+                    "strval": "[{\"Axis\":0,\"Color\":[0,255,54,255],\"Series\":[0,10,20,40,80,80,40,20,10,0]}]",
                     "InheritedType": 12
                   },
                   {
@@ -35263,7 +35265,7 @@
     "theme_color1": 5,
     "theme_color2": 0,
     "custom_variable_prefix": "uic",
-    "backup_cnt": 150,
+    "backup_cnt": 196,
     "autosave_cnt": 0,
     "group_color_cnt": 9,
     "lvgl_version": "8.3.11",

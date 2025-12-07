@@ -261,6 +261,8 @@ void ui_Tela_Instrumento_screen_init(void)
     lv_obj_remove_style_all(ui_ContGSR);
     lv_obj_set_width(ui_ContGSR, 280);
     lv_obj_set_height(ui_ContGSR, 50);
+    lv_obj_set_x(ui_ContGSR, -451);
+    lv_obj_set_y(ui_ContGSR, -58);
     lv_obj_set_align(ui_ContGSR, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_ContGSR, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_ContGSR, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -285,7 +287,7 @@ void ui_Tela_Instrumento_screen_init(void)
     lv_label_set_text(ui_Lbl_Titulo4, "Nivel de Estresse (GSR)");
 
     ui_Img_Icone4 = lv_img_create(ui_ContGSR);
-    lv_img_set_src(ui_Img_Icone4, &ui_img_134478313);
+    lv_img_set_src(ui_Img_Icone4, &ui_img_gsr_png);
     lv_obj_set_width(ui_Img_Icone4, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Img_Icone4, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_Img_Icone4, 20);

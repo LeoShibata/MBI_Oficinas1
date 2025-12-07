@@ -1,6 +1,6 @@
 ui_comp_cardbase2.c
-ui_comp_combarrastatus.c
 ui_comp_termometro.c
+ui_comp_combarrastatus.c
 ui_comp.c
 ui_Tela_Inicial.c
 ui_Selecao_de_Modo.c
@@ -25,6 +25,7 @@ ui_img_1635948304.c
 ui_img_652512494.c
 ui_img_1680349653.c
 ui_img_134478313.c
+ui_img_gsr_png.c
 ui_img_177543304.c
 ui_img_96564182.c
 ui_img_141844619.c

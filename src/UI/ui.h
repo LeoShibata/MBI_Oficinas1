@@ -50,6 +50,7 @@ LV_IMG_DECLARE(ui_img_1635948304);    // assets/icons8-termômetro-40.png
 LV_IMG_DECLARE(ui_img_652512494);    // assets/icons8-forward-20.png
 LV_IMG_DECLARE(ui_img_1680349653);    // assets/icons8-coração-com-pulso-40 (1).png
 LV_IMG_DECLARE(ui_img_134478313);    // assets/icons8-pulsação-40.png
+LV_IMG_DECLARE(ui_img_gsr_png);    // assets/gsr.png
 LV_IMG_DECLARE(ui_img_177543304);    // assets/risk (1).png
 LV_IMG_DECLARE(ui_img_96564182);    // assets/icons8-círculo-preenchido-64.png
 LV_IMG_DECLARE(ui_img_141844619);    // assets/icons8-gostar-20.png

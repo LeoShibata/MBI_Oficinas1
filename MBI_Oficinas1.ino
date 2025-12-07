@@ -36,6 +36,10 @@ float lastValidGSR = 0.f;
 float visual_ir_dc = 0;                      // Para garantir que a onda não fique uma linha reta no topo do gráfico
 const float visual_alpha = 0.95;             // Suavização para centro do gráfico 
 
+// --- Variáveis para Cálculo de BPM do ECG ---
+unsigned long ecg_last_beat = 0; // Marca o tempo do último batimento
+float ecg_bpm_calc = 0.f;        // Guarda o BPM calculado
+
 // ==========================================
 //           FUNÇÕES AUXILIARES
 // ==========================================
@@ -88,6 +92,17 @@ void setup() {
 
     lvgl_display_init();
     ui_init();
+
+    if(ui_ChartPPG) {
+        lv_chart_series_t* serPPG = lv_chart_get_series_next(ui_ChartPPG, NULL);
+        lv_chart_set_ext_y_array(ui_ChartPPG, serPPG, NULL); 
+    }
+    
+    if(ui_Chart2) {
+        lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
+        lv_chart_set_ext_y_array(ui_Chart2, ser, NULL);
+    }
+
     rtc_init();
     CSV_init();
     init_temperature_sensor();
@@ -125,8 +140,29 @@ void loop() {
     // ------ Gráfico (Tela ECG) ------
     if (millis() - lastGraphUpdate > graphInterval) {
         lastGraphUpdate = millis();
+
+        float mv = ad8232_read_ecg_mv();
+
+        // Para cálculo do BPM
+        if (mv > 0.8 && (millis() - ecg_last_beat > 300)) {
+             unsigned long delta = millis() - ecg_last_beat;
+             
+             if(delta > 0) {
+                 float inst_bpm = 60000.0 / delta; // 60 segundos / tempo entre batidas
+                 
+                 // Filtro: Aceita apenas BPMs fisiologicamente possíveis (40 a 220)
+                 if(inst_bpm > 40 && inst_bpm < 220) {
+                     if(ecg_bpm_calc == 0) {
+                        ecg_bpm_calc = inst_bpm;
+                     } else {
+                        ecg_bpm_calc = (ecg_bpm_calc * 0.9) + (inst_bpm * 0.1);
+                    }
+                 }
+             }
+             ecg_last_beat = millis(); // Atualiza o relógio
+        }
+
         if (ui_ECG && lv_scr_act() == ui_ECG) {
-            float mv = ad8232_read_ecg_mv();
             if (mv > -900) { // -999 indica erro de leitura
                 int val = 50 + (int)(mv * 20.0f);
 
@@ -174,7 +210,7 @@ void loop() {
 
         // ------------ Atualizar REC DOT ------------
         updateRecDotState();
-        
+
         // ------------ Leitura de Sensores (Valores Numéricos) ------------
         // --- Temperatura ---
         float currentTemp = read_temperature();
@@ -225,12 +261,11 @@ void loop() {
             lv_label_set_text(ui_LabelGSR, stress_buffer);
         }
 
-        // --- ECG --- /////////////// CORRIGIR "BPM"
-        float currentBPM = ad8232_read_ecg_mv();
+        // --- ECG --- 
         char BPM_buffer[16];
         
-        if(currentBPM > -900.f) {
-            snprintf(BPM_buffer, sizeof(BPM_buffer), "%.1f", currentBPM);
+        if(ecg_bpm_calc > 1.f) {
+            snprintf(BPM_buffer, sizeof(BPM_buffer), "%.0f", ecg_bpm_calc);
         } else {
             strcpy(BPM_buffer, "--");
         }
@@ -278,17 +313,30 @@ void loop() {
         if(isLoggingActive) {
             Serial.printf("LOG: User = %s, Sess = %s, Temp = %.2f C, SpO2 = %.1f\n", currentUserId, currentSessionId, currentTemp, currentSpO2);
             
+            // Grava Temperatura
             if (!CSV_appendRow(currentUserId, currentSessionId, "Temperatura", (double)currentTemp, "C")) {
                  Serial.println("Erro: Falha ao gravar Temp no SD.");
             }
             
+            // Grava SpO2 (Oxigenação)
             if(ppg_hasSpO2()) {
                  if (!CSV_appendRow(currentUserId, currentSessionId, "SpO2", (double)ppg_getSpO2(), "%")) {
                      Serial.println("Erro: Falha ao gravar SpO2.");
                  }
             }
             
+            // Grava GSR (Estresse)
             CSV_appendRow(currentUserId, currentSessionId, "GSR", (double)lastValidGSR, "uS");
+
+            // Grava BPM do ECG 
+            if(ecg_bpm_calc > 0) {
+                CSV_appendRow(currentUserId, currentSessionId, "BPM (ECG)", (double)ecg_bpm_calc, "bpm");
+            }
+
+            // Grava BPM do Oxímetro 
+            if(ppg_hasBPM()) {
+                CSV_appendRow(currentUserId, currentSessionId, "BPM (Oxi)", (double)currentOxiBPM, "bpm");
+            }
         }
     }
 }
