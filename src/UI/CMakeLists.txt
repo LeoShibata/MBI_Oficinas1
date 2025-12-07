@@ -1,6 +1,6 @@
 SET(SOURCES ui_comp_cardbase2.c
-    ui_comp_termometro.c
     ui_comp_combarrastatus.c
+    ui_comp_termometro.c
     ui_comp.c
     ui_Tela_Inicial.c
     ui_Selecao_de_Modo.c

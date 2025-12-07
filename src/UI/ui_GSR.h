@@ -18,7 +18,6 @@ extern lv_obj_t * ui_Button9;
 extern lv_obj_t * ui_Label16;
 extern lv_obj_t * ui_ComBarraStatus4;
 extern lv_obj_t * ui_Label27;
-extern lv_obj_t * ui_Label28;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

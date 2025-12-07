@@ -110,14 +110,14 @@ void ui_Tela_Oximetro_screen_init(void)
     lv_obj_set_style_img_recolor_opa(ui_Image4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ChartPPG = lv_chart_create(ui_Tela_Oximetro);
-    lv_obj_set_width(ui_ChartPPG, 110);
+    lv_obj_set_width(ui_ChartPPG, 130);
     lv_obj_set_height(ui_ChartPPG, 180);
     lv_obj_set_x(ui_ChartPPG, -40);
     lv_obj_set_y(ui_ChartPPG, 0);
     lv_obj_set_align(ui_ChartPPG, LV_ALIGN_RIGHT_MID);
     lv_chart_set_type(ui_ChartPPG, LV_CHART_TYPE_LINE);
     lv_chart_set_point_count(ui_ChartPPG, 50);
-    lv_chart_set_range(ui_ChartPPG, LV_CHART_AXIS_PRIMARY_Y, -500, 500);
+    lv_chart_set_range(ui_ChartPPG, LV_CHART_AXIS_PRIMARY_Y, -200, 200);
     lv_chart_set_div_line_count(ui_ChartPPG, 10, 10);
     lv_chart_set_axis_tick(ui_ChartPPG, LV_CHART_AXIS_PRIMARY_X, 10, 5, 5, 2, true, 50);
     lv_chart_set_axis_tick(ui_ChartPPG, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);

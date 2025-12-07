@@ -51,7 +51,6 @@ void ui_ECG_screen_init(void)
     lv_obj_set_align(ui_Chart2, LV_ALIGN_CENTER);
     lv_chart_set_type(ui_Chart2, LV_CHART_TYPE_LINE);
     lv_chart_set_point_count(ui_Chart2, 50);
-    lv_chart_set_range(ui_Chart2, LV_CHART_AXIS_PRIMARY_Y, 500, -500);
     lv_chart_set_div_line_count(ui_Chart2, 10, 20);
     lv_chart_set_axis_tick(ui_Chart2, LV_CHART_AXIS_PRIMARY_X, 10, 5, 5, 2, true, 50);
     lv_chart_set_axis_tick(ui_Chart2, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);
