@@ -15235,7 +15235,7 @@
           {
             "nid": 40,
             "strtype": "GROUP/Hidden",
-            "strval": "False",
+            "strval": "True",
             "InheritedType": 2
           }
         ],
@@ -34705,7 +34705,7 @@
           {
             "nid": 10,
             "strtype": "GROUP/Name",
-            "strval": "Instrunentos",
+            "strval": "Instrumentos",
             "InheritedType": 10
           },
           {
@@ -34726,7 +34726,7 @@
           {
             "nid": 40,
             "strtype": "GROUP/Hidden",
-            "strval": "",
+            "strval": "True",
             "InheritedType": 2
           }
         ],
@@ -35122,7 +35122,7 @@
     "theme_color1": 5,
     "theme_color2": 0,
     "custom_variable_prefix": "uic",
-    "backup_cnt": 203,
+    "backup_cnt": 212,
     "autosave_cnt": 0,
     "group_color_cnt": 9,
     "lvgl_version": "8.3.11",

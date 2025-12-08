@@ -88,7 +88,7 @@ void setup() {
     Serial.begin(115200);
 
     // Inicializa I2C (Necessário para o RTC)
-    Wire.begin(27,22); 
+    Wire.begin(27, 22); 
 
     lvgl_display_init();
     ui_init();
@@ -128,6 +128,13 @@ void loop() {
     }
 
     // ------ Gráfico (Tela ECG) ------
+    if (ui_ECG && lv_scr_act() == ui_ECG) {
+        if(ui_Chart2) {
+            lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
+            lv_chart_set_ext_y_array(ui_Chart2, ser, NULL);
+        }
+    }
+
     if (millis() - lastGraphUpdate > graphInterval) {
         lastGraphUpdate = millis();
 
@@ -166,7 +173,6 @@ void loop() {
                 
                 if(ui_Chart2) {
                     lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
-                    lv_chart_set_ext_y_array(ui_Chart2, ser, NULL);
                     lv_chart_set_next_value(ui_Chart2, ser, val);
                 }
             }
