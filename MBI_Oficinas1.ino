@@ -99,6 +99,9 @@ void setup() {
     }
 
     rtc_init();
+
+    Wire.setPins(27, 22);
+    
     CSV_init();
     init_temperature_sensor();
     ad8232_init();
