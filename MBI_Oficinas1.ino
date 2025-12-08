@@ -95,19 +95,27 @@ void setup() {
 
     if(ui_Chart2) {
         lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
-        lv_chart_set_ext_y_array(ui_Chart2, ser, NULL); // Evita crash no ecg
+        lv_chart_set_ext_y_array(ui_Chart2, ser, NULL); // Remove array pequeno do SquareLine
+        lv_chart_set_point_count(ui_Chart2, 50);        // Aloca memória segura para 50 pontos
+    }
+
+    if(ui_ChartPPG) {
+        lv_chart_series_t* ser = lv_chart_get_series_next(ui_ChartPPG, NULL);
+        lv_chart_set_ext_y_array(ui_ChartPPG, ser, NULL); // Remove array pequeno do SquareLine
+        lv_chart_set_point_count(ui_ChartPPG, 50);       // Aloca memória segura para 100 pontos
     }
 
     rtc_init();
 
     Wire.setPins(27, 22);
-    
+
     CSV_init();
     init_temperature_sensor();
     ad8232_init();
     gsr_init();
     max30102_start();
     ppg_init(100);
+
     setup_ui_logic_bindings(); 
 }
 
