@@ -28473,6 +28473,7 @@
                   },
                   {
                     "nid": 1170,
+                    "flags": 1048576,
                     "strtype": "CHART/Secondary_Y_Axis",
                     "InheritedType": 1
                   },
@@ -28517,6 +28518,7 @@
                   },
                   {
                     "nid": 1230,
+                    "flags": 1048576,
                     "strtype": "CHART/Chart_data",
                     "InheritedType": 1
                   },
@@ -35121,7 +35123,7 @@
     "theme_color1": 5,
     "theme_color2": 0,
     "custom_variable_prefix": "uic",
-    "backup_cnt": 221,
+    "backup_cnt": 225,
     "autosave_cnt": 0,
     "group_color_cnt": 9,
     "lvgl_version": "8.3.11",

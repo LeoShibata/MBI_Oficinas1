@@ -93,18 +93,6 @@ void setup() {
     lvgl_display_init();
     ui_init();
 
-    if(ui_Chart2) {
-        lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
-        lv_chart_set_ext_y_array(ui_Chart2, ser, NULL); // Remove array pequeno do SquareLine
-        lv_chart_set_point_count(ui_Chart2, 50);        // Aloca memória segura para 50 pontos
-    }
-
-    if(ui_ChartPPG) {
-        lv_chart_series_t* ser = lv_chart_get_series_next(ui_ChartPPG, NULL);
-        lv_chart_set_ext_y_array(ui_ChartPPG, ser, NULL); // Remove array pequeno do SquareLine
-        lv_chart_set_point_count(ui_ChartPPG, 50);       // Aloca memória segura para 100 pontos
-    }
-
     rtc_init();
 
     Wire.setPins(27, 22);
@@ -144,12 +132,6 @@ void loop() {
     }
 
     // ------ Gráfico (Tela ECG) ------
-    if (ui_ECG && lv_scr_act() == ui_ECG) {
-        if(ui_Chart2) {
-            lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
-        }
-    }
-
     if (millis() - lastGraphUpdate > graphInterval) {
         lastGraphUpdate = millis();
 
@@ -184,11 +166,6 @@ void loop() {
                 }
                 if (val > 100) {
                     val = 100;
-                }
-                
-                if(ui_Chart2) {
-                    lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
-                    lv_chart_set_next_value(ui_Chart2, ser, val);
                 }
             }
         }
