@@ -127,7 +127,6 @@ void loop() {
         if (ui_Tela_Oximetro && lv_scr_act() == ui_Tela_Oximetro) {
             if(ui_ChartPPG) {
                 lv_chart_series_t* ser = lv_chart_get_series_next(ui_ChartPPG, NULL);
-                lv_chart_set_ext_y_array(ui_ChartPPG, ser, NULL);
                 lv_chart_set_next_value(ui_ChartPPG, ser, (int)onda_AC);
             }
         }
@@ -137,7 +136,6 @@ void loop() {
     if (ui_ECG && lv_scr_act() == ui_ECG) {
         if(ui_Chart2) {
             lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
-            lv_chart_set_ext_y_array(ui_Chart2, ser, NULL);
         }
     }
 
