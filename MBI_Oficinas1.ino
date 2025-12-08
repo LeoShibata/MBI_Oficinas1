@@ -92,6 +92,12 @@ void setup() {
 
     lvgl_display_init();
     ui_init();
+
+    if(ui_Chart2) {
+        lv_chart_series_t* ser = lv_chart_get_series_next(ui_Chart2, NULL);
+        lv_chart_set_ext_y_array(ui_Chart2, ser, NULL); // Evita crash no ecg
+    }
+
     rtc_init();
     CSV_init();
     init_temperature_sensor();
