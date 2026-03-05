@@ -19,7 +19,7 @@
 
 // --- Controle de Sessão e Log ---
 bool isLoggingActive = false;
-char currentUserId[64] = {0};
+char currentUserId[64] = {0};   
 char currentSessionId[32] = {0};
 
 // --- Controle de Tempo (Timers) ---
@@ -92,11 +92,7 @@ void setup() {
 
     lvgl_display_init();
     ui_init();
-
     rtc_init();
-
-    Wire.setPins(27, 22);
-
     CSV_init();
     init_temperature_sensor();
     ad8232_init();
